@@ -1,0 +1,12 @@
+@if (loadingService.isLoading()) {
+  <div class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm">
+    <div class="p-8 flex flex-col items-center">
+      <p-progress-spinner
+        strokeWidth="2"
+        fill="transparent"
+        animationDuration="2s"
+        ariaLabel="Cargando..." />
+      <p class="mt-4 text-base text-gray-100 font-semibold">Cargando datos...</p>
+    </div>
+  </div>
+}

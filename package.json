@@ -1,0 +1,77 @@
+{
+  "name": "frontend-notes",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test",
+    "lint": "ng lint --max-warnings=10",
+    "lint:fix": "ng lint --fix --max-warnings=10",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "code:check": "yarn lint && yarn format:check",
+    "code:fix": "yarn lint:fix && yarn format",
+    "prepare": "husky",
+    "pre-commit": "lint-staged",
+    "commit-msg": "commitlint --edit"
+  },
+  "lint-staged": {
+    "*.{ts,js}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{html,scss,css,json,md}": [
+      "prettier --write"
+    ]
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/animations": "^20.2.4",
+    "@angular/common": "^20.2.0",
+    "@angular/compiler": "^20.2.0",
+    "@angular/core": "^20.2.0",
+    "@angular/forms": "^20.2.0",
+    "@angular/platform-browser": "^20.2.0",
+    "@angular/router": "^20.2.0",
+    "@primeuix/themes": "^1.2.3",
+    "@tailwindcss/postcss": "^4.1.12",
+    "json-server": "^1.0.0-beta.3",
+    "postcss": "^8.5.6",
+    "primeicons": "^7.0.0",
+    "primeng": "^20.1.1",
+    "rxjs": "~7.8.0",
+    "tailwindcss": "^4.1.12",
+    "tailwindcss-primeui": "^0.6.1",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@angular-eslint/builder": "^20.2.0",
+    "@angular/build": "^20.2.1",
+    "@angular/cli": "^20.2.1",
+    "@angular/compiler-cli": "^20.2.0",
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@eslint/js": "^9.34.0",
+    "@types/jasmine": "~5.1.0",
+    "@typescript-eslint/parser": "^8.43.0",
+    "angular-eslint": "^20.2.0",
+    "eslint": "^9.34.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "husky": "^9.1.7",
+    "jasmine-core": "~5.9.0",
+    "karma": "~6.4.0",
+    "karma-chrome-launcher": "~3.2.0",
+    "karma-coverage": "~2.2.0",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.1.0",
+    "lint-staged": "^16.1.6",
+    "prettier": "^3.6.2",
+    "pretty-quick": "^4.2.2",
+    "typescript": "~5.9.2",
+    "typescript-eslint": "^8.42.0"
+  }
+}

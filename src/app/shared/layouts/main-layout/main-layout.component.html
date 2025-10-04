@@ -1,0 +1,11 @@
+<div class="layout-wrapper" [class]="containerClass">
+  <app-topbar />
+  <app-sidebar />
+  <div class="layout-main-container">
+    <div class="layout-main">
+      <router-outlet></router-outlet>
+    </div>
+    <app-footer />
+  </div>
+  <div class="layout-mask animate-fadein"></div>
+</div>

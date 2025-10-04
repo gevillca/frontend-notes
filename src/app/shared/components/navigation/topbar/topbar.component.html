@@ -1,0 +1,29 @@
+<div class="layout-topbar">
+  <div class="layout-topbar-logo-container">
+    <p-button
+      (click)="layoutService.onMenuToggle()"
+      size="large"
+      severity="secondary"
+      variant="text"
+      class="layout-topbar-action layout-menu-button">
+      <i class="pi pi-bars"></i>
+    </p-button>
+  </div>
+
+  <div class="layout-topbar-actions">
+    <div class="layout-config-menu">
+      <app-theme />
+    </div>
+
+    <p-avatar
+      image="https://primefaces.org/cdn/primeng/images/demo/avatar/xuxuefeng.png"
+      size="large"
+      shape="square"
+      pTooltip="Usuario"
+      class="cursor-pointer"
+      tooltipPosition="bottom"
+      (click)="userMenu.toggle($event)"></p-avatar>
+
+    <p-menu #userMenu [model]="userMenuItems" [popup]="true" class="user-dropdown-menu"></p-menu>
+  </div>
+</div>

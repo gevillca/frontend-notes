@@ -1,0 +1,35 @@
+#!/usr/bin/env sh
+
+
+# Get the commit message
+commit_msg=$(cat $1 | grep -v "^#" | grep -v "^$" | head -1)
+
+# Validate format using a simplified regular expression
+if ! echo "$commit_msg" | grep -qE '^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\(.+\))?: .+'; then
+  echo "❌ ERROR: INVALID COMMIT FORMAT"
+  echo ""
+  echo "The commit message must follow the format:"
+  echo "  <type>(<optional scope>): <description>"
+  echo ""
+  echo "Allowed types:"
+  echo "  feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert"
+  echo ""
+  echo "Correct examples:"
+  echo "  feat(users): add Google login support"
+  echo "  fix: fix total calculation bug"
+  echo ""
+  echo "Your message:"
+  echo "  $commit_msg"
+  echo ""
+  exit 1
+fi
+
+# Run commitlint for more detailed validation
+yarn commitlint --edit $1
+result=$?
+
+if [ $result -eq 0 ]; then
+  echo "✅ Commit format is valid"
+fi
+
+exit $result

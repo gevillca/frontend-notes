@@ -1,0 +1,40 @@
+{
+  // Basic auto-formatting - CONSISTENT with ESLint + Prettier
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  // Specific formatters for TEAM CONSISTENCY
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  // TypeScript & Imports - RELATIVE AND CUSTOM PATHS
+  "typescript.suggest.autoImports": true,
+  "typescript.preferences.includePackageJsonAutoImports": "auto",
+  "typescript.suggest.includeCompletionsForModuleExports": true,
+  "typescript.preferences.importModuleSpecifier": "shortest",
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "typescript.preferences.quoteStyle": "single",
+
+  // Basic configuration
+  "editor.tabSize": 2,
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+
+  // Essential tools (ESLint and Prettier extensions must be installed)
+  "emmet.includeLanguages": {
+    "typescript": "html"
+  }
+}

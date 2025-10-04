@@ -1,0 +1,48 @@
+<p-card class="transition-shadow hover:shadow-lg">
+  @if (imageUrl()) {
+    <ng-template pTemplate="header">
+      <img
+        [src]="imageUrl()"
+        [alt]="title() + ' image'"
+        class="w-full h-48 object-cover cursor-pointer hover:opacity-90 transition-opacity"
+        tabindex="0"
+        role="button"
+        [attr.aria-label]="'Click to view ' + title() + ' image'"
+        (click)="onImageClick()"
+        (keyup.enter)="onImageClick()"
+        (keyup.space)="onImageClick()" />
+    </ng-template>
+  }
+
+  @if (title() || subtitle()) {
+    <div class="mb-4">
+      @if (title()) {
+        <h3 class="text-xl font-semibold text-surface-900 dark:text-surface-0 mb-2">
+          {{ title() }}
+        </h3>
+      }
+      @if (subtitle()) {
+        <p class="text-surface-600 dark:text-surface-400 text-sm">
+          {{ subtitle() }}
+        </p>
+      }
+    </div>
+  }
+
+  <div class="relative">
+    @if (loading()) {
+      <div
+        class="absolute inset-0 bg-white/75 dark:bg-gray-900/75 flex items-center justify-center z-10">
+        <i class="pi pi-spinner pi-spin text-2xl text-primary"></i>
+      </div>
+    }
+
+    <ng-content></ng-content>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex gap-2 justify-end">
+      <ng-content select="[card-action]"></ng-content>
+    </div>
+  </ng-template>
+</p-card>

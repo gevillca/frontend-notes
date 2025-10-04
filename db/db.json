@@ -1,0 +1,198 @@
+{
+  "users": [
+    {
+      "id": "user-01",
+      "name": "Gustavo Villca",
+      "email": "gustavo@example.com",
+      "avatarUrl": "https://i.pravatar.cc/150?u=user-01",
+      "role": "owner",
+      "createdAt": "2025-09-30T14:12:00.000Z"
+    },
+    {
+      "id": "user-02",
+      "name": "Ana Pérez",
+      "email": "ana@example.com",
+      "avatarUrl": "https://i.pravatar.cc/150?u=user-02",
+      "role": "editor",
+      "createdAt": "2025-09-28T10:00:00.000Z"
+    },
+    {
+      "id": "user-03",
+      "name": "Carlos Ruiz",
+      "email": "carlos@example.com",
+      "avatarUrl": "https://i.pravatar.cc/150?u=user-03",
+      "role": "viewer",
+      "createdAt": "2025-08-15T09:00:00.000Z"
+    }
+  ],
+  "tags": [
+    { "id": "tag-1", "name": "Cooking" },
+    { "id": "tag-2", "name": "Dev" },
+    { "id": "tag-3", "name": "Fitness" },
+    { "id": "tag-4", "name": "Health" },
+    { "id": "tag-5", "name": "Personal" },
+    { "id": "tag-6", "name": "React" },
+    { "id": "tag-7", "name": "Recipes" },
+    { "id": "tag-8", "name": "Shopping" },
+    { "id": "tag-9", "name": "Travel" },
+    { "id": "tag-10", "name": "TypeScript" }
+  ],
+  "notebooks": [
+    {
+      "id": "nb-01",
+      "title": "All Notes",
+      "description": "Todas las notas",
+      "ownerId": "user-01",
+      "createdAt": "2025-07-01T08:00:00.000Z",
+      "isPrivate": false
+    },
+    {
+      "id": "nb-02",
+      "title": "Archived",
+      "description": "Notas archivadas",
+      "ownerId": "user-01",
+      "createdAt": "2025-07-01T08:00:00.000Z",
+      "isPrivate": false
+    }
+  ],
+  "notes": [
+    {
+      "id": "note-001",
+      "notebookId": "nb-01",
+      "title": "React Performance Optimization",
+      "content": "Key performance optimization techniques:\n\n1. Code Splitting\n- Use React.lazy() for route-based splitting\n- Implement dynamic imports for heavy components\n\n2. Memoization\n- useMemo for expensive calculations\n- useCallback for function props\n- React.memo for component optimization\n\n3. Virtual List Implementation\n- Use react-window for long lists\n- Implement infinite scrolling\n\nTODO: Benchmark current application and identify bottlenecks",
+      "tags": ["tag-2", "tag-6"],
+      "ownerId": "user-01",
+      "sharedWith": [{ "id": "user-02", "role": "editor" }],
+      "attachments": ["att-01"],
+      "archived": false,
+      "isFavorite": true,
+      "lastEdited": "2024-10-29T14:00:00.000Z",
+      "version": 3,
+      "metadata": { "wordCount": 120, "readTimeMin": 3 }
+    },
+    {
+      "id": "note-002",
+      "notebookId": "nb-01",
+      "title": "Japan Travel Planning",
+      "content": "Plan del viaje a Japón:\n- Itinerario: Tokio, Kioto, Osaka\n- Reservas de hotel\n- JR Pass\n- Presupuesto estimado",
+      "tags": ["tag-9", "tag-5"],
+      "ownerId": "user-01",
+      "sharedWith": [],
+      "attachments": [],
+      "archived": false,
+      "isFavorite": false,
+      "lastEdited": "2024-10-28T09:30:00.000Z",
+      "version": 1,
+      "metadata": { "wordCount": 45, "readTimeMin": 1 }
+    },
+    {
+      "id": "note-003",
+      "notebookId": "nb-01",
+      "title": "Favorite Pasta Recipes",
+      "content": "- Spaghetti Carbonara\n- Penne Arrabiata\n- Lasagna Clásica",
+      "tags": ["tag-1", "tag-7"],
+      "ownerId": "user-01",
+      "sharedWith": [],
+      "attachments": [],
+      "archived": false,
+      "isFavorite": false,
+      "lastEdited": "2024-10-27T18:45:00.000Z",
+      "version": 1,
+      "metadata": { "wordCount": 12, "readTimeMin": 1 }
+    },
+    {
+      "id": "note-004",
+      "notebookId": "nb-01",
+      "title": "Weekly Workout Plan",
+      "content": "- Lunes: Pecho\n- Martes: Espalda\n- Miércoles: Piernas\n- Jueves: Brazos\n- Viernes: Cardio\n- Sábado: Full body",
+      "tags": ["tag-2", "tag-3"],
+      "ownerId": "user-01",
+      "sharedWith": [],
+      "attachments": [],
+      "archived": false,
+      "isFavorite": false,
+      "lastEdited": "2024-10-25T07:15:00.000Z",
+      "version": 1,
+      "metadata": { "wordCount": 30, "readTimeMin": 2 }
+    },
+    {
+      "id": "note-005",
+      "notebookId": "nb-02",
+      "title": "TypeScript Migration Guide",
+      "content": "Project migration steps:\n\n1. Initial Setup\n- Install TypeScript dependencies\n- Configure tsconfig.json\n\n2. Migration Strategy\n- Start with newer modules\n- Add type definitions gradually\n\n3. Testing Approach\n- Update test configuration\n- Add type testing\n\nDeadline: End of Q4 2024",
+      "tags": ["tag-2", "tag-6", "tag-10"],
+      "ownerId": "user-01",
+      "sharedWith": [],
+      "attachments": [],
+      "archived": true,
+      "isFavorite": false,
+      "lastEdited": "2024-10-26T15:00:00.000Z",
+      "version": 2,
+      "metadata": { "wordCount": 180, "readTimeMin": 4 }
+    }
+  ],
+  "comments": [
+    {
+      "id": "c-001",
+      "noteId": "note-001",
+      "authorId": "user-02",
+      "text": "He actualizado la sección de métricas, revisa si está OK.",
+      "createdAt": "2025-09-25T11:00:00.000Z"
+    }
+  ],
+  "attachments": [
+    {
+      "id": "att-01",
+      "noteId": "note-001",
+      "fileName": "release-checklist.pdf",
+      "url": "/assets/docs/release-checklist.pdf",
+      "mimeType": "application/pdf",
+      "size": 124512,
+      "uploadedBy": "user-01",
+      "uploadedAt": "2025-09-29T09:30:00.000Z"
+    }
+  ],
+  "activity": [
+    {
+      "id": "act-001",
+      "type": "note.updated",
+      "noteId": "note-001",
+      "by": "user-02",
+      "timestamp": "2025-09-29T10:00:00.000Z",
+      "meta": { "version": 3 }
+    },
+    {
+      "id": "act-002",
+      "type": "note.archived",
+      "noteId": "note-005",
+      "by": "user-01",
+      "timestamp": "2025-09-26T15:00:00.000Z",
+      "meta": {}
+    }
+  ],
+  "preferences": [
+    {
+      "userId": "user-01",
+      "theme": "light",
+      "editorMode": "rich-text",
+      "itemsPerPage": 20,
+      "showAvatars": true
+    }
+  ],
+  "templates": [
+    {
+      "id": "tpl-001",
+      "title": "Meeting template",
+      "body": "Agenda:\\n1) Objetivos\\n2) Tiempos\\n3) Acciones\\n\\nNotas:"
+    }
+  ],
+  "searchIndex": [
+    {
+      "id": "note-001",
+      "title": "React Performance Optimization",
+      "snippet": "Key performance optimization techniques..."
+    },
+    { "id": "note-002", "title": "Japan Travel Planning", "snippet": "Plan del viaje a Japón..." }
+  ]
+}
