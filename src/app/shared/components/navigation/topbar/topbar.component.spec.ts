@@ -1,3 +1,4 @@
+import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
@@ -10,7 +11,7 @@ describe('Topbar', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Topbar],
-      providers: [provideZonelessChangeDetection()],
+      providers: [provideHttpClient(withFetch()), provideZonelessChangeDetection()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Topbar);

@@ -1,5 +1,6 @@
 /**
- * Environment configuration
+ * Sample environment configuration
+ * Copy this file to environment.development.ts and set real values locally.
  */
 export interface EnvironmentConfig {
   production: boolean;
@@ -10,9 +11,9 @@ export interface EnvironmentConfig {
 }
 
 export const environment: EnvironmentConfig = {
-  production: true,
-  apiUrl: 'https://api-url',
+  production: false,
+  apiUrl: 'http://localhost:3000',
   appName: 'Frontend Notes',
   version: '1.0.0',
-  useMockApi: false,
+  useMockApi: true,
 };
