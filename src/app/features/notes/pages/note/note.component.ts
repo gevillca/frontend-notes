@@ -4,13 +4,16 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Button } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
-import { map } from 'rxjs/operators';
+import { filter, map, switchMap } from 'rxjs/operators';
 
 import { PageHeaderComponent } from '@shared/components/ui/page-header/page-header.component';
+import { CONFIRMATION_SERVICE } from '@shared/services/ui/confirmation/interface/confirmation.interface';
+import {
+  NoteDetailComponent,
+  NoteFormComponent,
+  NoteListItemComponent,
+} from '@features/notes/components';
 
-import { NoteDetailComponent } from '../../components/note-detail/note-detail.component';
-import { NoteFormComponent } from '../../components/note-form/note-form.component';
-import { NoteListItemComponent } from '../../components/note-list/note-list-item.component';
 import { Note } from '../../interfaces/notes.interface';
 import { NotesService } from '../../services/notes.service';
 import { TagsService } from '../../services/tags.service';
@@ -26,6 +29,7 @@ import { TagsService } from '../../services/tags.service';
     Button,
     DialogModule,
   ],
+
   templateUrl: './note.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -34,6 +38,7 @@ export default class NoteComponent {
   private readonly router = inject(Router);
   private readonly notesService = inject(NotesService);
   private readonly tagsService = inject(TagsService);
+  private readonly confirmationService = inject(CONFIRMATION_SERVICE);
 
   // Signals for reactive state management
   private readonly searchTerm = signal<string>('');
@@ -159,47 +164,48 @@ export default class NoteComponent {
   }
 
   onArchiveNote(note: Note): void {
-    this.isLoading.set(true);
-    this.notesService.updateNote(note.id, { ...note, archived: !note.archived }).subscribe({
-      next: () => {
-        this.isLoading.set(false);
-        // Notes will be automatically updated via the reactive stream
-      },
-      error: (error) => {
-        console.error('Error archiving note:', error);
-        this.isLoading.set(false);
-      },
-    });
-  }
-
-  onDeleteNote(note: Note): void {
-    if (confirm('Are you sure you want to delete this note? This action cannot be undone.')) {
-      this.isLoading.set(true);
-      this.notesService.deleteNote(note.id).subscribe({
+    this.confirmationService
+      .confirmArchive(
+        'Are you sure you want  to archive this note? You can find it in the Archived Notes sections and restore it anytime.',
+      )
+      .pipe(
+        filter((confirmed) => confirmed === true),
+        switchMap(() => {
+          this.isLoading.set(true);
+          return this.notesService.updateNote(note.id, { ...note, archived: !note.archived });
+        }),
+      )
+      .subscribe({
         next: () => {
           this.isLoading.set(false);
-          this.selectedNote.set(null);
-          // Notes will be automatically updated via the reactive stream
         },
         error: (error) => {
-          console.error('Error deleting note:', error);
+          console.error('Error archiving note:', error);
           this.isLoading.set(false);
         },
       });
-    }
   }
 
-  onToggleFavorite(note: Note): void {
-    this.isLoading.set(true);
-    this.notesService.updateNote(note.id, { ...note, isFavorite: !note.isFavorite }).subscribe({
-      next: () => {
-        this.isLoading.set(false);
-        // Notes will be automatically updated via the reactive stream
-      },
-      error: (error) => {
-        console.error('Error toggling favorite:', error);
-        this.isLoading.set(false);
-      },
-    });
+  onDeleteNote(note: Note): void {
+    this.confirmationService
+      .confirmDelete(
+        'Are you sure you want to permanently delete this note? This action cannot be undone.',
+      )
+      .pipe(
+        filter((confirmed) => confirmed === true),
+        switchMap(() => {
+          this.isLoading.set(true);
+          return this.notesService.deleteNote(note.id);
+        }),
+      )
+      .subscribe({
+        next: () => {
+          this.isLoading.set(false);
+          this.selectedNote.set(null);
+        },
+        error: () => {
+          this.isLoading.set(false);
+        },
+      });
   }
 }

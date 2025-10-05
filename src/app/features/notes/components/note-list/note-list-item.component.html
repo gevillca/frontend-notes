@@ -1,9 +1,6 @@
 <div
   pRipple
-  class="p-4 border-b border-surface cursor-pointer transition-colors hover:bg-surface-hover"
-  [class.bg-primary-50]="isSelected()"
-  [class.border-l-4]="isSelected()"
-  [class.border-l-primary]="isSelected()"
+  [class]="itemClasses()"
   (click)="onClick()"
   tabindex="0"
   role="button">

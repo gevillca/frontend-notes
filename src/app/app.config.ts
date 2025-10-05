@@ -10,12 +10,16 @@ import {
   withEnabledBlockingInitialNavigation,
   withInMemoryScrolling,
 } from '@angular/router';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { providePrimeNG } from 'primeng/config';
 
 import { LoadingInterceptor } from '@core/interceptors/loading.interceptor';
-import { NOTIFICATION_SERVICE } from '@shared/services/ui/notification/interface/notification.interface';
-import { NotificationServiceImpl } from '@shared/services/ui/notification/notification.service';
+import {
+  ConfirmationDialogServiceImpl,
+  NOTIFICATION_SERVICE,
+  NotificationServiceImpl,
+} from '@shared/services/ui';
+import { CONFIRMATION_SERVICE } from '@shared/services/ui/confirmation/interface/confirmation.interface';
 import ThemePresent from '@shared/theme/presets/theme-preset';
 
 import { routes } from './app.routes';
@@ -36,6 +40,14 @@ export const appConfig: ApplicationConfig = {
     }),
 
     MessageService,
-    { provide: NOTIFICATION_SERVICE, useClass: NotificationServiceImpl },
+    ConfirmationService,
+    {
+      provide: NOTIFICATION_SERVICE,
+      useClass: NotificationServiceImpl,
+    },
+    {
+      provide: CONFIRMATION_SERVICE,
+      useClass: ConfirmationDialogServiceImpl,
+    },
   ],
 };
