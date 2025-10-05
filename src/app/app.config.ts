@@ -13,6 +13,7 @@ import {
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { providePrimeNG } from 'primeng/config';
 
+import { AuthInterceptor } from '@core/interceptors/auth.interceptor';
 import { LoadingInterceptor } from '@core/interceptors/loading.interceptor';
 import {
   ConfirmationDialogServiceImpl,
@@ -31,7 +32,7 @@ export const appConfig: ApplicationConfig = {
       withInMemoryScrolling({ anchorScrolling: 'enabled', scrollPositionRestoration: 'enabled' }),
       withEnabledBlockingInitialNavigation(),
     ),
-    provideHttpClient(withFetch(), withInterceptors([LoadingInterceptor])),
+    provideHttpClient(withFetch(), withInterceptors([AuthInterceptor, LoadingInterceptor])),
     provideZonelessChangeDetection(),
     provideBrowserGlobalErrorListeners(),
     provideAnimationsAsync(),

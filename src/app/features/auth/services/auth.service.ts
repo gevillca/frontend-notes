@@ -3,7 +3,7 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { environment } from '@environments/environment.development';
-import { catchError, map, Observable, of, switchMap, throwError } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 
 import { StorageService } from '@shared/services/data/storage/storage.service';
 
@@ -16,12 +16,14 @@ type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';
 export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
+
   private storageService = inject(StorageService);
-  private baseUrl = `${environment.apiUrl}`;
+  private baseUrl = `${environment.apiUrl}/auth`;
 
   private _authStatus = signal<AuthStatus>('checking');
+
   private _user = signal<User | null>(null);
-  private _token = signal<string | null>(this.storageService.getItem<string>('token'));
+  private _token = signal<string | null>(this.storageService.getItem('token'));
 
   checkStatusResource = rxResource({
     stream: () => this.checkStatus(),
@@ -40,62 +42,56 @@ export class AuthService {
   token = computed<string | null>(() => this._token());
 
   login(email: string, password: string): Observable<boolean> {
-    return environment.useMockApi
-      ? this.loginMock(email, password)
-      : this.loginReal(email, password);
+    return this.http
+      .post<AuthResponse>(`${this.baseUrl}/login`, {
+        email,
+        password,
+      })
+      .pipe(
+        map((resp) => this.handleAuthSuccess(resp)),
+        catchError((error) => {
+          this.clearAuthState();
+          const errorMessage = error.error?.msg || 'Email or password incorrect';
+          throw new Error(errorMessage);
+        }),
+      );
   }
 
   register(email: string, password: string): Observable<boolean> {
-    return environment.useMockApi
-      ? this.registerMock(email, password)
-      : this.registerReal(email, password);
+    return this.http
+      .post<AuthResponse>(`${this.baseUrl}/register`, {
+        email,
+        password,
+      })
+      .pipe(
+        map(() => true),
+        catchError((error) => {
+          const errorMessage = error.error?.msg || 'Error register user';
+          throw new Error(errorMessage);
+        }),
+      );
   }
 
   checkStatus(): Observable<boolean> {
-    return of(this.isTokenValid());
+    const token = this.storageService.getItem('token');
+
+    if (!token) {
+      this.clearAuthState();
+      return of(false);
+    }
+
+    return this.http.get<AuthResponse>(`${this.baseUrl}/check-status`, {}).pipe(
+      map((resp) => this.handleAuthSuccess(resp)),
+      catchError(() => {
+        this.clearAuthState();
+        return of(false);
+      }),
+    );
   }
 
   logout() {
     this.clearAuthState();
     this.router.navigate(['/auth/login']);
-  }
-
-  private isTokenValid(): boolean {
-    const token = this.storageService.getItem<string>('token');
-
-    if (!token) {
-      this.clearAuthState();
-      return false;
-    }
-
-    try {
-      const payload = this.decodeToken(token);
-
-      if (payload.exp < Date.now()) {
-        this.clearAuthState();
-        return false;
-      }
-
-      const currentUser = this._user();
-      if (currentUser && currentUser.id === payload.userId) {
-        this._authStatus.set('authenticated');
-        return true;
-      }
-
-      this._authStatus.set('authenticated');
-      return true;
-    } catch {
-      this.clearAuthState();
-      return false;
-    }
-  }
-
-  private handleAuthSuccess({ user, token }: AuthResponse): boolean {
-    this._user.set(user);
-    this._authStatus.set('authenticated');
-    this._token.set(token);
-    this.storageService.setItem('token', token);
-    return true;
   }
 
   private clearAuthState() {
@@ -105,80 +101,11 @@ export class AuthService {
     this.storageService.removeItem('token');
   }
 
-  private decodeToken(token: string): { userId: string; exp: number } {
-    const parts = token.split('.');
-    if (parts.length !== 3) throw new Error('Invalid token');
-    return JSON.parse(atob(parts[1]));
-  }
-
-  private loginMock(email: string, password: string): Observable<boolean> {
-    return this.http.get<User[]>(`${this.baseUrl}/users?email=${email}&password=${password}`).pipe(
-      switchMap((users) => {
-        if (users.length === 0) {
-          return throwError(() => new Error('Invalid email or password'));
-        }
-
-        const user = users[0];
-        const token = this.generateMockToken(user.id);
-        return of(this.handleAuthSuccess({ user, token }));
-      }),
-      catchError((error) => {
-        console.error('Error en login:', error);
-        return throwError(() => new Error('Invalid email or password'));
-      }),
-    );
-  }
-
-  private registerMock(email: string, password: string): Observable<boolean> {
-    return this.http.get<User[]>(`${this.baseUrl}/users?email=${email}`).pipe(
-      switchMap((existingUsers) => {
-        if (existingUsers.length > 0) {
-          return throwError(() => new Error('Email already registered'));
-        }
-
-        const newUser = {
-          id: `user-${Date.now()}`,
-          email,
-          password,
-          avatarUrl: `https://i.pravatar.cc/150?u=${email}`,
-          createdAt: new Date(),
-        };
-
-        return this.http.post<User>(`${this.baseUrl}/users`, newUser);
-      }),
-      map(() => {
-        return true;
-      }),
-      catchError((error) => {
-        return throwError(() => new Error(error.message));
-      }),
-    );
-  }
-
-  private generateMockToken(userId: string): string {
-    const payload = { userId, exp: Date.now() + 86400000 };
-    return `mock.${btoa(JSON.stringify(payload))}.signature`;
-  }
-
-  private loginReal(email: string, password: string): Observable<boolean> {
-    return this.http.post<AuthResponse>(`${this.baseUrl}/auth/login`, { email, password }).pipe(
-      map(({ user, token }) => this.handleAuthSuccess({ user, token })),
-      catchError((error) => {
-        console.error('Error en login:', error);
-        return throwError(() => new Error('Email o contraseña incorrectos'));
-      }),
-    );
-  }
-
-  private registerReal(email: string, password: string): Observable<boolean> {
-    return this.http.post<AuthResponse>(`${this.baseUrl}/auth/register`, { email, password }).pipe(
-      map(() => {
-        return true;
-      }),
-      catchError((error) => {
-        const errorMessage = error.error?.message || error.message || 'Registration failed';
-        return throwError(() => new Error(errorMessage));
-      }),
-    );
+  private handleAuthSuccess({ token, user }: AuthResponse) {
+    this._user.set(user);
+    this._authStatus.set('authenticated');
+    this._token.set(token);
+    this.storageService.setItem('token', token);
+    return true;
   }
 }

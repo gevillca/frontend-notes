@@ -16,7 +16,7 @@
     "prepare": "husky",
     "pre-commit": "lint-staged",
     "commit-msg": "commitlint --edit",
-    "api": "json-server --watch db/db.json --port 3000"
+    "api": "node db/server.js"
   },
   "lint-staged": {
     "*.{ts,js}": [
