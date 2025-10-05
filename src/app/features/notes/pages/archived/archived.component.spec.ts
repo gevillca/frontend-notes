@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ArchivedComponent } from './archived.component';
+import ArchivedComponent from './archived.component';
 
 describe('ArchivedComponent', () => {
   let component: ArchivedComponent;
@@ -8,9 +8,8 @@ describe('ArchivedComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ArchivedComponent]
-    })
-    .compileComponents();
+      imports: [ArchivedComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ArchivedComponent);
     component = fixture.componentInstance;

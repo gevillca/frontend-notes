@@ -23,7 +23,6 @@
     </div>
   </div>
 
-  <!-- Form Content -->
   <form [formGroup]="noteForm" class="p-4">
     <!-- Title Input -->
     <div class="mb-4">
@@ -65,18 +64,6 @@
         placeholder="Start writing your note..."
         rows="12"
         class="w-full"></textarea>
-    </div>
-
-    <!-- Footer Info -->
-    <div
-      class="flex items-center justify-between text-xs text-surface-500 dark:text-surface-400 pt-2 border-t border-surface">
-      <div class="flex items-center gap-4">
-        <span>{{ getWordCount() }} words</span>
-        <span>{{ getReadTime() }} min read</span>
-      </div>
-      @if (isEditing()) {
-        <span>Last edited: {{ formatDate(note()?.lastEdited) }}</span>
-      }
     </div>
   </form>
 </div>

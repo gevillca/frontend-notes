@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '@environments/environment';
-import { Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { Tag } from '../interfaces/tag.interface';
 
@@ -11,9 +11,8 @@ export class TagsService {
   private readonly baseUrl = `${environment.apiUrl}/tags`;
 
   getAllTags(): Observable<Tag[]> {
-    return this.http
-      .get<Tag[]>(this.baseUrl)
-      .pipe(tap((tags) => console.log('Fetched tags:', tags)));
+    return this.http.get<Tag[]>(this.baseUrl);
+    // .pipe(tap((tags) => console.log('Fetched tags:', tags)));
   }
 
   getTagById(id: string): Observable<Tag> {

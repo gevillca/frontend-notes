@@ -11,13 +11,13 @@ export interface Note {
   isFavorite: boolean;
   lastEdited: Date;
   version: number;
-  metadata: Metadata;
+  // metadata: Metadata;
 }
 
-export interface Metadata {
-  wordCount: number;
-  readTimeMin: number;
-}
+// export interface Metadata {
+//   wordCount: number;
+//   readTimeMin: number;
+// }
 
 export interface SharedWith {
   id: string;

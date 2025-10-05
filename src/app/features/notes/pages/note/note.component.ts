@@ -4,7 +4,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Button } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 
 import { PageHeaderComponent } from '@shared/components/ui/page-header/page-header.component';
 import { CONFIRMATION_SERVICE } from '@shared/services/ui/confirmation/interface/confirmation.interface';
@@ -13,10 +13,9 @@ import {
   NoteFormComponent,
   NoteListItemComponent,
 } from '@features/notes/components';
-
-import { Note } from '../../interfaces/notes.interface';
-import { NotesService } from '../../services/notes.service';
-import { TagsService } from '../../services/tags.service';
+import { Note } from '@features/notes/interfaces/notes.interface';
+import { NotesStore } from '@features/notes/store/notes.store';
+import { TagsStore } from '@features/notes/store/tags.store';
 
 @Component({
   selector: 'app-note',
@@ -36,76 +35,40 @@ import { TagsService } from '../../services/tags.service';
 export default class NoteComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly notesService = inject(NotesService);
-  private readonly tagsService = inject(TagsService);
   private readonly confirmationService = inject(CONFIRMATION_SERVICE);
+  readonly notesStore = inject(NotesStore);
+  readonly tagsStore = inject(TagsStore);
 
-  // Signals for reactive state management
-  private readonly searchTerm = signal<string>('');
-  private readonly isLoading = signal<boolean>(false);
   readonly showNoteForm = signal<boolean>(false);
   readonly editingNote = signal<Note | null>(null);
-  readonly selectedNote = signal<Note | null>(null);
 
   private readonly routeParams = toSignal(this.route.paramMap);
   private readonly routeUrl = toSignal(
     this.route.url.pipe(map((segments) => segments.map((segment) => segment.path))),
   );
 
-  // Load all notes and tags
-  private readonly allNotes = toSignal(this.notesService.getAllNotes(), { initialValue: [] });
-  readonly allTags = toSignal(this.tagsService.getAllTags(), { initialValue: [] });
-  constructor() {
-    console.log({ tags: this.allTags() });
-  }
+  readonly allTags = this.tagsStore.tags;
 
-  // Computed signals derived from route data
   currentTag = computed(() => {
     const params = this.routeParams();
-    return params?.get('tag') || null;
+    const tag = params?.get('tag') || null;
+
+    this.notesStore.setFilterTag(tag);
+    return tag;
   });
 
   isArchivedView = computed(() => {
     const url = this.routeUrl();
-    return url?.includes('archived') || false;
+    const isArchived = url?.includes('archived') || false;
+
+    this.notesStore.setShowArchived(isArchived);
+    return isArchived;
   });
 
-  // Computed filtered notes based on current view and search
-  filteredNotes = computed(() => {
-    const notes = this.allNotes();
-    const searchTerm = this.searchTerm().toLowerCase();
-    const currentTag = this.currentTag();
-    const isArchived = this.isArchivedView();
+  filteredNotes = this.notesStore.filteredNotes;
+  selectedNote = this.notesStore.selectedNote;
+  isLoading = this.notesStore.isLoading;
 
-    let filtered = notes.filter((note) => note.archived === isArchived);
-
-    // Filter by tag if specified
-    if (currentTag) {
-      filtered = filtered.filter((note) =>
-        note.tags.some((tagId) => {
-          const tag = this.allTags().find((t) => t.id === tagId);
-          return tag?.name === currentTag;
-        }),
-      );
-    }
-
-    // Filter by search term
-    if (searchTerm) {
-      filtered = filtered.filter(
-        (note) =>
-          note.title.toLowerCase().includes(searchTerm) ||
-          note.content.toLowerCase().includes(searchTerm) ||
-          note.tags.some((tag) => tag.toLowerCase().includes(searchTerm)),
-      );
-    }
-
-    // Sort by last edited date (most recent first)
-    return filtered.sort(
-      (a, b) => new Date(b.lastEdited).getTime() - new Date(a.lastEdited).getTime(),
-    );
-  });
-
-  // View title computation
   viewTitle = computed(() => {
     if (this.isArchivedView()) {
       return 'Archived Notes';
@@ -116,10 +79,8 @@ export default class NoteComponent {
     }
   });
 
-  // Event handlers
   onSearchChange(searchTerm: string): void {
-    console.log({ searchTerm });
-    this.searchTerm.set(searchTerm);
+    this.notesStore.searchNotes(searchTerm);
   }
 
   onCreateNote(): void {
@@ -128,7 +89,7 @@ export default class NoteComponent {
   }
 
   onNoteClick(note: Note): void {
-    this.selectedNote.set(note);
+    this.notesStore.setSelectedNote(note);
   }
 
   onEditNote(note: Note): void {
@@ -137,25 +98,16 @@ export default class NoteComponent {
   }
 
   onSaveNote(noteData: Partial<Note>): void {
-    this.isLoading.set(true);
-
     const isEditing = this.editingNote() !== null;
-    const request = isEditing
-      ? this.notesService.updateNote(noteData.id!, noteData)
-      : this.notesService.createNote(noteData);
 
-    request.subscribe({
-      next: () => {
-        this.isLoading.set(false);
-        this.showNoteForm.set(false);
-        this.editingNote.set(null);
-        // Notes will be automatically updated via the reactive stream
-      },
-      error: (error) => {
-        console.error('Error saving note:', error);
-        this.isLoading.set(false);
-      },
-    });
+    if (isEditing) {
+      this.notesStore.updateNote({ id: noteData.id!, note: noteData });
+    } else {
+      this.notesStore.createNote(noteData);
+    }
+
+    this.showNoteForm.set(false);
+    this.editingNote.set(null);
   }
 
   onCancelForm(): void {
@@ -168,20 +120,10 @@ export default class NoteComponent {
       .confirmArchive(
         'Are you sure you want  to archive this note? You can find it in the Archived Notes sections and restore it anytime.',
       )
-      .pipe(
-        filter((confirmed) => confirmed === true),
-        switchMap(() => {
-          this.isLoading.set(true);
-          return this.notesService.updateNote(note.id, { ...note, archived: !note.archived });
-        }),
-      )
+      .pipe(filter((confirmed) => confirmed === true))
       .subscribe({
         next: () => {
-          this.isLoading.set(false);
-        },
-        error: (error) => {
-          console.error('Error archiving note:', error);
-          this.isLoading.set(false);
+          this.notesStore.toggleArchive(note.id);
         },
       });
   }
@@ -191,20 +133,10 @@ export default class NoteComponent {
       .confirmDelete(
         'Are you sure you want to permanently delete this note? This action cannot be undone.',
       )
-      .pipe(
-        filter((confirmed) => confirmed === true),
-        switchMap(() => {
-          this.isLoading.set(true);
-          return this.notesService.deleteNote(note.id);
-        }),
-      )
+      .pipe(filter((confirmed) => confirmed === true))
       .subscribe({
         next: () => {
-          this.isLoading.set(false);
-          this.selectedNote.set(null);
-        },
-        error: () => {
-          this.isLoading.set(false);
+          this.notesStore.deleteNote(note.id);
         },
       });
   }

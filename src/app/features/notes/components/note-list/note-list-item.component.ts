@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { Ripple } from 'primeng/ripple';
 import { Tag as PrimeTag } from 'primeng/tag';
 
 import { DateFormatPipe } from '@shared/pipes/date-format.pipe';
-
-import { Note } from '../../interfaces/notes.interface';
-import { Tag } from '../../interfaces/tag.interface';
+import { Note } from '@features/notes/interfaces/notes.interface';
+import { Tag } from '@features/notes/interfaces/tag.interface';
+import { TagsStore } from '@features/notes/store/tags.store';
 
 @Component({
   selector: 'app-note-list-item',
@@ -18,22 +18,14 @@ import { Tag } from '../../interfaces/tag.interface';
   },
 })
 export class NoteListItemComponent {
-  // Inputs
+  private readonly tagsStore = inject(TagsStore);
+
   note = input.required<Note>();
   allTags = input<Tag[]>([]);
   isSelected = input<boolean>(false);
 
-  // Outputs
   noteClick = output<Note>();
 
-  /**
-   * Computed CSS classes for the note item container
-   * Uses Tailwind classes with dark mode support
-   *
-   * @remarks
-   * This computed signal is necessary because Angular cannot bind
-   * classes with colons (dark:) directly using [class.dark:xxx]
-   */
   readonly itemClasses = computed(() => {
     const base =
       'p-4 border-b border-surface cursor-pointer transition-colors hover:bg-surface-hover';
@@ -41,13 +33,21 @@ export class NoteListItemComponent {
     return this.isSelected() ? `${base} ${selected}` : base;
   });
 
-  // Event Handlers
+  readonly tagNames = computed(() => {
+    const note = this.note();
+    if (!note.tags || note.tags.length === 0) {
+      return [];
+    }
+
+    const getTagName = this.tagsStore.getTagName();
+    return note.tags.map((tagId) => getTagName(tagId)).filter((name) => name !== 'Unknown');
+  });
+
   onClick(): void {
     this.noteClick.emit(this.note());
   }
 
   getTagNames(): string[] {
-    // TODO: Implementar lógica de obtención de nombres de tags
-    return [];
+    return this.tagNames();
   }
 }

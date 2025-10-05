@@ -1,9 +1,4 @@
-<div
-  pRipple
-  [class]="itemClasses()"
-  (click)="onClick()"
-  tabindex="0"
-  role="button">
+<div pRipple [class]="itemClasses()" (click)="onClick()" tabindex="0" role="button">
   <!-- Title -->
   <div class="flex items-start justify-between mb-2">
     <h3
@@ -12,18 +7,11 @@
     </h3>
   </div>
 
-  <!-- Content Preview -->
-  @if (note().content) {
-    <p class="text-sm text-surface-600 dark:text-surface-400 mb-2 line-clamp-2">
-      {{ note().content }}
-    </p>
-  }
-
   <!-- Tags -->
-  @if (getTagNames().length > 0) {
+  @if (tagNames().length > 0) {
     <div class="flex flex-wrap gap-1 mb-2">
-      @for (tagName of getTagNames(); track tagName) {
-        <p-tag [value]="tagName" [rounded]="true" class="text-xs"></p-tag>
+      @for (tagName of tagNames(); track $index) {
+        <p-tag [value]="tagName" class="text-xs" severity="secondary" />
       }
     </div>
   }

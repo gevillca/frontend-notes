@@ -1346,6 +1346,13 @@
     "@emnapi/runtime" "^1.4.5"
     "@tybys/wasm-util" "^0.10.0"
 
+"@ngrx/signals@^20.0.1":
+  version "20.0.1"
+  resolved "https://registry.yarnpkg.com/@ngrx/signals/-/signals-20.0.1.tgz#0dd640b2bd7e216e4e1186d37206b26f24491f08"
+  integrity sha512-7YYPH4nTkmLEgibJnwi527toEm3tsnlCzp5AzT9osS8JxN9cHxkG6iQ7fzhw9N4bTt+8wyUZb7PF0YLFYD2RHA==
+  dependencies:
+    tslib "^2.3.0"
+
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
   resolved "https://registry.npmjs.org/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz"
