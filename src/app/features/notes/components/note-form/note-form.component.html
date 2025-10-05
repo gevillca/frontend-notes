@@ -1,0 +1,82 @@
+<div class="bg-surface-card rounded-lg shadow-lg border border-surface">
+  <!-- Header -->
+  <div class="border-b border-surface p-4">
+    <div class="flex items-center justify-between">
+      <h2 class="text-lg font-semibold text-surface-900 dark:text-surface-0">
+        {{ isEditing() ? 'Edit Note' : 'Create New Note' }}
+      </h2>
+      <div class="flex gap-2">
+        <p-button
+          label="Cancel"
+          icon="pi pi-times"
+          severity="secondary"
+          [outlined]="true"
+          (onClick)="onCancel()" />
+
+        <p-button
+          label="Save Note"
+          icon="pi pi-check"
+          severity="primary"
+          [disabled]="noteForm.invalid"
+          (onClick)="onSave()" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Content -->
+  <form [formGroup]="noteForm" class="p-4">
+    <!-- Title Input -->
+    <div class="mb-4">
+      <input
+        pInputText
+        type="text"
+        formControlName="title"
+        placeholder="Note title..."
+        class="w-full text-xl font-semibold" />
+      @if (noteForm.get('title')?.invalid && noteForm.get('title')?.touched) {
+        <small class="text-red-500">Title is required</small>
+      }
+    </div>
+
+    <!-- Tags Section -->
+    <div class="mb-4">
+      <div class="flex items-center gap-2 mb-2">
+        <i class="pi pi-tag text-surface-500"></i>
+        <span class="text-sm text-surface-500 dark:text-surface-400">Tags</span>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        @for (tag of availableTags(); track tag.id) {
+          <p-button
+            [label]="tag.name"
+            [outlined]="!noteForm.get('tags')?.value?.includes(tag.id)"
+            [severity]="noteForm.get('tags')?.value?.includes(tag.id) ? 'primary' : 'secondary'"
+            size="small"
+            [rounded]="true"
+            (onClick)="toggleTag(tag.id)" />
+        }
+      </div>
+    </div>
+
+    <!-- Content Editor -->
+    <div class="mb-4">
+      <textarea
+        pInputTextarea
+        formControlName="content"
+        placeholder="Start writing your note..."
+        rows="12"
+        class="w-full"></textarea>
+    </div>
+
+    <!-- Footer Info -->
+    <div
+      class="flex items-center justify-between text-xs text-surface-500 dark:text-surface-400 pt-2 border-t border-surface">
+      <div class="flex items-center gap-4">
+        <span>{{ getWordCount() }} words</span>
+        <span>{{ getReadTime() }} min read</span>
+      </div>
+      @if (isEditing()) {
+        <span>Last edited: {{ formatDate(note()?.lastEdited) }}</span>
+      }
+    </div>
+  </form>
+</div>

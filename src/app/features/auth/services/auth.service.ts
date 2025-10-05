@@ -17,6 +17,7 @@ export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
   private storageService = inject(StorageService);
+  private baseUrl = `${environment.apiUrl}`;
 
   private _authStatus = signal<AuthStatus>('checking');
   private _user = signal<User | null>(null);
@@ -111,27 +112,25 @@ export class AuthService {
   }
 
   private loginMock(email: string, password: string): Observable<boolean> {
-    return this.http
-      .get<User[]>(`${environment.apiUrl}/users?email=${email}&password=${password}`)
-      .pipe(
-        switchMap((users) => {
-          if (users.length === 0) {
-            return throwError(() => new Error('Invalid email or password'));
-          }
-
-          const user = users[0];
-          const token = this.generateMockToken(user.id);
-          return of(this.handleAuthSuccess({ user, token }));
-        }),
-        catchError((error) => {
-          console.error('Error en login:', error);
+    return this.http.get<User[]>(`${this.baseUrl}/users?email=${email}&password=${password}`).pipe(
+      switchMap((users) => {
+        if (users.length === 0) {
           return throwError(() => new Error('Invalid email or password'));
-        }),
-      );
+        }
+
+        const user = users[0];
+        const token = this.generateMockToken(user.id);
+        return of(this.handleAuthSuccess({ user, token }));
+      }),
+      catchError((error) => {
+        console.error('Error en login:', error);
+        return throwError(() => new Error('Invalid email or password'));
+      }),
+    );
   }
 
   private registerMock(email: string, password: string): Observable<boolean> {
-    return this.http.get<User[]>(`${environment.apiUrl}/users?email=${email}`).pipe(
+    return this.http.get<User[]>(`${this.baseUrl}/users?email=${email}`).pipe(
       switchMap((existingUsers) => {
         if (existingUsers.length > 0) {
           return throwError(() => new Error('Email already registered'));
@@ -145,7 +144,7 @@ export class AuthService {
           createdAt: new Date(),
         };
 
-        return this.http.post<User>(`${environment.apiUrl}/users`, newUser);
+        return this.http.post<User>(`${this.baseUrl}/users`, newUser);
       }),
       map(() => {
         return true;
@@ -162,28 +161,24 @@ export class AuthService {
   }
 
   private loginReal(email: string, password: string): Observable<boolean> {
-    return this.http
-      .post<AuthResponse>(`${environment.apiUrl}/auth/login`, { email, password })
-      .pipe(
-        map(({ user, token }) => this.handleAuthSuccess({ user, token })),
-        catchError((error) => {
-          console.error('Error en login:', error);
-          return throwError(() => new Error('Email o contraseña incorrectos'));
-        }),
-      );
+    return this.http.post<AuthResponse>(`${this.baseUrl}/auth/login`, { email, password }).pipe(
+      map(({ user, token }) => this.handleAuthSuccess({ user, token })),
+      catchError((error) => {
+        console.error('Error en login:', error);
+        return throwError(() => new Error('Email o contraseña incorrectos'));
+      }),
+    );
   }
 
   private registerReal(email: string, password: string): Observable<boolean> {
-    return this.http
-      .post<AuthResponse>(`${environment.apiUrl}/auth/register`, { email, password })
-      .pipe(
-        map(() => {
-          return true;
-        }),
-        catchError((error) => {
-          const errorMessage = error.error?.message || error.message || 'Registration failed';
-          return throwError(() => new Error(errorMessage));
-        }),
-      );
+    return this.http.post<AuthResponse>(`${this.baseUrl}/auth/register`, { email, password }).pipe(
+      map(() => {
+        return true;
+      }),
+      catchError((error) => {
+        const errorMessage = error.error?.message || error.message || 'Registration failed';
+        return throwError(() => new Error(errorMessage));
+      }),
+    );
   }
 }

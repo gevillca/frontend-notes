@@ -1,0 +1,39 @@
+<div
+  pRipple
+  class="p-4 border-b border-surface cursor-pointer transition-colors hover:bg-surface-hover"
+  [class.bg-primary-50]="isSelected()"
+  [class.border-l-4]="isSelected()"
+  [class.border-l-primary]="isSelected()"
+  (click)="onClick()"
+  tabindex="0"
+  role="button">
+  <!-- Title -->
+  <div class="flex items-start justify-between mb-2">
+    <h3
+      class="text-base font-semibold text-surface-900 dark:text-surface-0 flex-1 pr-2 line-clamp-1">
+      {{ note().title }}
+    </h3>
+  </div>
+
+  <!-- Content Preview -->
+  @if (note().content) {
+    <p class="text-sm text-surface-600 dark:text-surface-400 mb-2 line-clamp-2">
+      {{ note().content }}
+    </p>
+  }
+
+  <!-- Tags -->
+  @if (getTagNames().length > 0) {
+    <div class="flex flex-wrap gap-1 mb-2">
+      @for (tagName of getTagNames(); track tagName) {
+        <p-tag [value]="tagName" [rounded]="true" class="text-xs"></p-tag>
+      }
+    </div>
+  }
+
+  <!-- Date -->
+  <div class="flex items-center text-xs text-surface-500 dark:text-surface-400">
+    <i class="pi pi-clock mr-1"></i>
+    <span>{{ note().lastEdited | dateFormat }}</span>
+  </div>
+</div>
