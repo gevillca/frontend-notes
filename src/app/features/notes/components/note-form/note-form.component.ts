@@ -101,12 +101,7 @@ export class NoteFormComponent {
       };
       this.save.emit(noteData);
     } else {
-      const currentUser = this.authService.user();
-
-      if (!currentUser) {
-        console.error('Cannot create note: User not authenticated');
-        return;
-      }
+      const currentUser = this.authService.user()!;
 
       const noteData: Partial<Note> = {
         title: formValue.title.trim(),
@@ -116,7 +111,7 @@ export class NoteFormComponent {
         version: 1,
         archived: false,
         isFavorite: false,
-        notebookId: 'nb-01', // TODO: Should be configurable by user
+        ownerId: currentUser.id,
         sharedWith: [],
         attachments: [],
       };

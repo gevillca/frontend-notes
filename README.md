@@ -1,59 +1,67 @@
-## 🚦 Getting Started
+# 📝 Notes Frontend (Digital Harbor Code Challenge)
 
-1. **Clone the repository:**
+Modern notes management application with user authentication, built with Angular 20 and NgRx Signals.
+
+## 🚦 Quick Start
+
+1. **Clone and install:**
 
    ```sh
    git clone https://github.com/gevillca/frontend-notes.git
    cd frontend-notes
-   ```
-
-2. **Install Yarn (if you don't have it):**
-
-   ```sh
-   npm install -g yarn
-   ```
-
-3. **Install dependencies:**
-
-   ```sh
    yarn install
    ```
 
-4. **Start the development server:**
+2. **Setup configuration files:**
 
    ```sh
-   yarn start
+   # Copy sample database
+   cp db/db.json.sample db/db.json
+
+   # Copy sample environment
+   cp src/environments/environment.development.sample.ts src/environments/environment.development.ts
    ```
 
-5. **(Optional) Start the mock API server:**
+   **Note:** Both `db.json` and `environment.development.ts` are gitignored to protect local configurations.
+
+3. **Start backend and frontend:**
 
    ```sh
-   yarn json-server --watch db/db.json --port 3000
+   # Terminal 1 - Backend API
+   yarn api
+
+   # Terminal 2 - Frontend
+   ng serve
    ```
 
-6. The app will be running at `http://localhost:4200` and the API at `http://localhost:3000`.
+4. **Access:** `http://localhost:4200`
 
-# Notes Frontend (Digital Harbor Code Challenge)
+5. **Demo login:**
+   - Email: `user@example.com`
+   - Password: `user12345`
+
+---
 
 ## 🛠️ Tech Stack
 
-- **Angular 20.2.0**
-- **PrimeNG**
-- **Tailwind CSS**
-- **TypeScript**
-- **JSON Server** (mock REST API for development)
-- **ESLint + Prettier** (code quality and formatting)
+- **Angular 20** - Standalone components + Signals
+- **NgRx Signals** - State management
+- **PrimeNG** - UI components
+- **Tailwind CSS** - Styling
+- **Node.js Server** - Custom backend with JWT auth
+- **ESLint + Prettier** - Code quality
 - **Husky + Commitlint** (git hooks and commit message linting)
 
-This project is a modern, scalable, and maintainable frontend application for managing personal notes, built as part of the Digital Harbor code challenge.
+---
 
-## 🚀 Features
+## ✨ Features
 
-- User authentication (login/register)
-- Responsive and accessible UI
-- Notification system for user actions
-- Error pages (404, etc.)
-- Theming with light/dark mode support
+- ✅ CRUD operations for notes
+- ✅ User authentication (JWT)
+- ✅ Tag system and search
+- ✅ Archive functionality
+- ✅ Dark/Light theme
+- ✅ Responsive design
 
 ## ⚡ Angular CLI Commands
 
@@ -65,55 +73,86 @@ You can also use the Angular CLI directly for common tasks:
 - `ng lint` — Run ESLint to check code quality
 - `ng generate component|service|module ...` — Generate Angular code scaffolding
 
-All CLI commands are available via Yarn scripts as well (see below).
-
 ## 📁 Project Structure
 
-- `src/app/features/` — Feature modules (auth, notes, error pages)
-- `src/app/shared/` — Shared components, layouts, services, and utilities
-- `src/app/shared/utils/validators.ts` — Centralized form validators and patterns
-- `src/assets/` — Global styles and static assets
-- `db/db.json` — JSON Server database for development/testing
+```
+src/
+├── app/
+│   ├── core/           # Guards, interceptors
+│   ├── features/       # Auth, Notes (components, services, store)
+│   └── shared/         # Reusable components, layouts, services
+└── environments/
+    ├── environment.ts                      # Production config
+    ├── environment.development.ts          # Development config
+    └── environment.development.sample.ts   # Development template
 
-## 🧑‍💻 How to Run
+db/
+├── server.js       # Custom Node.js API with JWT
+├── db.json         # JSON database
+└── db.json.sample  # Database template with demo data
+```
 
-### Frontend
+## ⚙️ Configuration Files
 
-1. Install dependencies:
-   ```sh
-   yarn install
-   ```
-2. Start the development server:
-   ```sh
-   yarn start
-   ```
+**Environment files:**
 
-### Mock API (JSON Server)
+- `environment.development.sample.ts` - Template for local development
+- `environment.development.ts` - Your local config (not committed)
+- `environment.ts` - Production configuration
 
-The project includes a JSON Server for development and testing:
+**Database files:**
 
-1. Start the mock API server:
+- `db.json.sample` - Template with demo users and notes
+- `db.json` - Your local database (not committed)
 
-   ```sh
-   yarn json-server --watch db/db.json --port 3000
-   ```
+**Why gitignored?** To prevent committing sensitive data or local configurations to the repository.
 
-2. The API will be available at: `http://localhost:3000`
+## 🔐 Backend API
+
+**Custom Node.js server** with JWT authentication on `http://localhost:3000`
+
+**Key endpoints:**
+
+```
+POST /auth/register    - Create user
+POST /auth/login       - Get JWT token
+GET  /notes            - Get user's notes
+POST /notes            - Create note
+GET  /tags             - Get all tags
+```
+
+**Demo users (from `db.json.sample`):**
+
+- `user@example.com` / `user12345`
+- `nataly@example.com` / `nataly12345`
+- `carlos@example.com` / `carlos12345`
+
+**Important:**
+
+- Each user only sees their own notes (validated server-side)
+- Copy `db.json.sample` to `db.json` before first run
+- Modify `db.json.sample` to customize demo data
 
 ## 📦 Scripts
 
-- `yarn start` — Run the app in development mode
-- `yarn build` — Build the app for production
-- `yarn test` — Run unit tests
-- `yarn lint` — Run ESLint to check code quality
-- `yarn lint:fix` — Fix ESLint issues automatically
-- `yarn format` — Format code with Prettier
-- `yarn code:check` — Check both linting and formatting
-- `yarn code:fix` — Fix both linting and formatting issues
+- `yarn start` - Start frontend (http://localhost:4200)
+- `yarn api` - Start backend (http://localhost:3000)
+- `yarn build` - Build for production
+- `yarn lint` - Check code quality
+- `yarn test` - Run unit tests
 
-## 📚 Notes
+---
 
-- This project is the frontend for a notes management system. It is designed for clarity, maintainability, and scalability, following clean code and SOLID principles.
-- **JSON Server** provides a full fake REST API for development and testing without needing a real backend.
-- API endpoints available at `http://localhost:3000` (users, notes, etc.)
-- For production, replace JSON Server with your actual backend API.
+## 🏗️ Architecture
+
+**Clean Architecture** with separation of concerns:
+
+- **Core** - Guards, interceptors
+- **Features** - Auth, Notes (NgRx Signals store)
+- **Shared** - Reusable components, services
+
+**Key patterns:**
+
+- OnPush change detection (all components)
+- Lazy loading routes
+- JWT authentication with interceptors
