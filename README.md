@@ -59,9 +59,9 @@ Modern notes management application with user authentication, built with Angular
 
 ---
 
-## ✨ Funcionalidades y Cumplimiento de Requerimientos
+## ✨ Features and Requirements Compliance
 
-### ✅ Requerimientos Funcionales Implementados
+### ✅ Implemented Functional Requirements
 
 | #   | Requerimiento                                           | Estado             | Implementación                            |
 | --- | ------------------------------------------------------- | ------------------ | ----------------------------------------- |
@@ -77,26 +77,26 @@ Modern notes management application with user authentication, built with Angular
 | 10  | Los usuarios pueden desarchivar notas                   | ✅ Completo        | Restaurar desde sección de archivados     |
 | 11  | Recordar estado de filtros y búsquedas entre sesiones   | ✅ Completo        | Persistencia de estado con localStorage   |
 
-**Nota:** La arquitectura está preparada para esta funcionalidad a través de:
+**Note:** The architecture is prepared for this functionality through:
 
-- Manejo de estado reactivo basado en Signals
-- Abstracción de capa de servicios
-- Arquitectura basada en componentes
+- Reactive state management based on Signals
+- Service layer abstraction
+- Component-based architecture
 
-Agregar servicios WebSocket y lógica de resolución de conflictos habilitaría esta funcionalidad en futuras iteraciones.
+Adding WebSocket services and conflict resolution logic would enable this functionality in future iterations.
 
-### 🎯 Funcionalidades Adicionales Implementadas
+### 🎯 Additional Features Implemented
 
-Más allá de los requerimientos, se agregaron las siguientes características:
+Beyond the requirements, the following features were added:
 
-- ✅ **Tema Claro/Oscuro** - Persistencia de preferencias del usuario
-- ✅ **Diseño Responsive** - Enfoque mobile-first con layouts adaptativos
-- ✅ **Editor de texto enriquecido** - Experiencia de edición mejorada
-- ✅ **Estados de carga** - Mejoras de UX con indicadores de carga
-- ✅ **Manejo de errores** - Mensajes de error y validación comprehensivos
-- ✅ **Sistema de avatares** - Perfil de usuario con visualización de avatar
-- ✅ **Diálogos de confirmación** - Prevenir eliminaciones accidentales
-- ✅ **Notificaciones toast** - Feedback al usuario para todas las acciones
+- ✅ **Light/Dark Theme** - User preference persistence
+- ✅ **Responsive Design** - Mobile-first approach with adaptive layouts
+- ✅ **Rich Text Editor** - Enhanced editing experience
+- ✅ **Loading States** - UX improvements with loading indicators
+- ✅ **Error Handling** - Comprehensive error messages and validation
+- ✅ **Avatar System** - User profile with avatar display
+- ✅ **Confirmation Dialogs** - Prevent accidental deletions
+- ✅ **Toast Notifications** - User feedback for all actions
 
 ## ⚡ Angular CLI Commands
 
