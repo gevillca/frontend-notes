@@ -11,14 +11,14 @@
       "id": "user-02",
       "email": "nataly@example.com",
       "password": "nataly12345",
-      "avatarUrl": "https://i.pravatar.cc/150?u=user-02",
+      "avatarUrl": "https://i.pravatar.cc/150?u=user-04",
       "createdAt": "2025-02-20T10:00:00.000Z"
     },
     {
       "id": "user-03",
       "email": "carlos@example.com",
       "password": "carlos12345",
-      "avatarUrl": "https://i.pravatar.cc/150?u=user-03",
+      "avatarUrl": "https://i.pravatar.cc/150?u=user-06",
       "createdAt": "2025-03-10T09:00:00.000Z"
     }
   ],

@@ -1,5 +1,10 @@
 # 📝 Notes Frontend (Digital Harbor Code Challenge)
 
+![Angular](https://img.shields.io/badge/Angular-20-red?style=flat-square&logo=angular)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.6-blue?style=flat-square&logo=typescript)
+![PrimeNG](https://img.shields.io/badge/PrimeNG-20-purple?style=flat-square)
+![Tests](https://img.shields.io/badge/Tests-brightgreen?style=flat-square)
+
 Modern notes management application with user authentication, built with Angular 20 and NgRx Signals.
 
 ## 🚦 Quick Start
@@ -54,14 +59,58 @@ Modern notes management application with user authentication, built with Angular
 
 ---
 
-## ✨ Features
+## ✨ Funcionalidades y Cumplimiento de Requerimientos
 
-- ✅ CRUD operations for notes
-- ✅ User authentication (JWT)
-- ✅ Tag system and search
-- ✅ Archive functionality
-- ✅ Dark/Light theme
-- ✅ Responsive design
+### ✅ Requerimientos Funcionales Implementados
+
+| #   | Requerimiento                                           | Estado             | Implementación                            |
+| --- | ------------------------------------------------------- | ------------------ | ----------------------------------------- |
+| 1   | Los usuarios pueden crear cuenta (SignUp)               | ✅ Completo        | Página de registro con validación         |
+| 2   | Los usuarios pueden iniciar sesión (Login)              | ✅ Completo        | Autenticación JWT con refresh token       |
+| 3   | Los usuarios pueden crear, ver, editar y eliminar notas | ✅ Completo        | Operaciones CRUD completas                |
+| 4   | Los usuarios pueden navegar por todas sus notas         | ✅ Completo        | Vista de lista con paginación             |
+| 5   | Los usuarios pueden filtrar notas por etiquetas         | ✅ Completo        | Sistema de filtrado por tags              |
+| 6   | Los usuarios pueden buscar notas por título             | ✅ Completo        | Búsqueda en tiempo real                   |
+| 7   | Edición colaborativa en tiempo real                     | ❌ No implementado | _Requeriría integración WebSocket_        |
+| 8   | Buscar notas por título, etiquetas o contenido          | ✅ Completo        | Búsqueda avanzada con múltiples criterios |
+| 9   | Los usuarios pueden archivar notas                      | ✅ Completo        | Funcionalidad de archivar/desarchivar     |
+| 10  | Los usuarios pueden desarchivar notas                   | ✅ Completo        | Restaurar desde sección de archivados     |
+| 11  | Recordar estado de filtros y búsquedas entre sesiones   | ✅ Completo        | Persistencia de estado con localStorage   |
+
+### 📊 Resumen de Cumplimiento
+
+- **Implementados:** 10 de 11 requerimientos (90.9%)
+- **No Implementado:** Edición colaborativa en tiempo real (requerimiento #7)
+
+### 💡 Por qué no se implementó la Edición Colaborativa
+
+El requerimiento #7 (edición colaborativa en tiempo real) no fue implementado debido a:
+
+1. **Complejidad Técnica:** Requiere infraestructura WebSocket/SignalR para sincronización en tiempo real
+2. **Requerimientos de Backend:** Necesitaría cambios significativos en el backend (resolución de conflictos, operational transforms)
+3. **Restricciones de Tiempo:** La implementación requeriría ciclos adicionales de desarrollo
+4. **Priorización de Scope:** Se priorizaron las funcionalidades CRUD core y experiencia de usuario
+
+**Nota:** La arquitectura está preparada para esta funcionalidad a través de:
+
+- Manejo de estado reactivo basado en Signals
+- Abstracción de capa de servicios
+- Arquitectura basada en componentes
+
+Agregar servicios WebSocket y lógica de resolución de conflictos habilitaría esta funcionalidad en futuras iteraciones.
+
+### 🎯 Funcionalidades Adicionales Implementadas
+
+Más allá de los requerimientos, se agregaron las siguientes características:
+
+- ✅ **Tema Claro/Oscuro** - Persistencia de preferencias del usuario
+- ✅ **Diseño Responsive** - Enfoque mobile-first con layouts adaptativos
+- ✅ **Editor de texto enriquecido** - Experiencia de edición mejorada
+- ✅ **Estados de carga** - Mejoras de UX con indicadores de carga
+- ✅ **Manejo de errores** - Mensajes de error y validación comprehensivos
+- ✅ **Sistema de avatares** - Perfil de usuario con visualización de avatar
+- ✅ **Diálogos de confirmación** - Prevenir eliminaciones accidentales
+- ✅ **Notificaciones toast** - Feedback al usuario para todas las acciones
 
 ## ⚡ Angular CLI Commands
 
@@ -156,3 +205,57 @@ GET  /tags             - Get all tags
 - OnPush change detection (all components)
 - Lazy loading routes
 - JWT authentication with interceptors
+
+---
+
+## 🧪 Testing
+
+**Test Coverage:** 73 unit tests implemented and passing
+
+**Running Tests:**
+
+```sh
+# Run tests in watch mode
+yarn test
+
+# Run tests once (headless)
+npm test -- --browsers=ChromeHeadless --watch=false
+```
+
+**Test Strategy:**
+
+- ✅ All services covered
+- ✅ Critical component flows tested
+- ✅ Guards and interceptors validated
+- ✅ HTTP requests mocked with HttpTestingController
+- ✅ Authentication flows verified
+
+**Key Testing Practices:**
+
+- Standalone component testing configuration
+- Proper provider setup for each test
+- Mock services for isolated testing
+- Environment-based URL configuration in tests
+
+---
+
+## 🔧 Troubleshooting
+
+### Cannot connect to backend
+
+- ✅ Verify backend is running: `yarn api`
+- ✅ Check port 3000 is available
+- ✅ Verify `API_URL` in `environment.development.ts` is `http://localhost:3000`
+
+### Database not found
+
+- ✅ Copy the sample: `cp db/db.json.sample db/db.json`
+- ✅ Restart the backend: `yarn api`
+
+### Build errors
+
+- ✅ Delete `node_modules` and reinstall: `rm -rf node_modules && yarn install`
+- ✅ Clear Angular cache: `rm -rf .angular`
+- ✅ Verify Node.js version: `node -v` (should be 18.x or higher)
+
+---
