@@ -14,6 +14,7 @@ import { DialogModule } from 'primeng/dialog';
 import { filter, map } from 'rxjs/operators';
 
 import { PageHeaderComponent } from '@shared/components/ui/page-header/page-header.component';
+import { QUERY_PARAMS } from '@shared/constants/query-params.constants';
 import { CONFIRMATION_SERVICE } from '@shared/services/ui/confirmation/interface/confirmation.interface';
 import { NOTIFICATIONS_MESSAGES } from '@shared/services/ui/notification/constants/notification-messages.constants';
 import { NOTIFICATION_SERVICE } from '@shared/services/ui/notification/interface/notification.interface';
@@ -84,9 +85,13 @@ export default class NoteComponent {
     }
   });
 
+  /**
+   * Synchronizes search term from URL query parameters.
+   * Clears search when no query param is present.
+   */
   private readonly syncSearchFromUrl = effect(() => {
     const params = this.queryParams();
-    const search = params?.get('search') || '';
+    const search = params?.get(QUERY_PARAMS.SEARCH) || '';
 
     this.notesStore.searchNotes(search);
   });
@@ -105,12 +110,16 @@ export default class NoteComponent {
     }
   });
 
+  /**
+   * Handles search input changes.
+   * Updates both store state and URL query parameters.
+   */
   onSearchChange(searchTerm: string): void {
     this.notesStore.searchNotes(searchTerm);
 
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { search: searchTerm || null },
+      queryParams: { [QUERY_PARAMS.SEARCH]: searchTerm || null },
       queryParamsHandling: 'merge',
     });
   }

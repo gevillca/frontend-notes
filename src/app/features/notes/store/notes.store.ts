@@ -213,7 +213,11 @@ export const NotesStore = signalStore(
     ),
 
     /**
-     * Debounced search (300ms delay to avoid excessive API calls)
+     * Updates the search term in the store.
+     * Debounced with 300ms delay to avoid excessive filtering operations.
+     * Uses distinctUntilChanged to prevent redundant updates.
+     *
+     * @param searchTerm - The search term to filter notes by
      */
     searchNotes: rxMethod<string>(
       pipe(
