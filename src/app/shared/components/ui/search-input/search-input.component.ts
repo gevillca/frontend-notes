@@ -24,18 +24,24 @@ import { debounceTime } from 'rxjs/operators';
 export class SearchInputComponent {
   placeholder = input<string>('Search...');
   debounceTime = input<number>(300);
+  value = input<string>('');
 
   searchChange = output<string>();
 
   searchControl = new FormControl<string>('', { nonNullable: true });
 
-  constructor() {
-    effect(() => {
-      const debounce = this.debounceTime();
+  private readonly syncValueEffect = effect(() => {
+    const initialValue = this.value();
+    if (initialValue !== this.searchControl.value) {
+      this.searchControl.setValue(initialValue, { emitEvent: false });
+    }
+  });
 
-      this.searchControl.valueChanges.pipe(debounceTime(debounce)).subscribe((value: string) => {
-        this.searchChange.emit(value);
-      });
+  private readonly searchEffect = effect(() => {
+    const debounce = this.debounceTime();
+
+    this.searchControl.valueChanges.pipe(debounceTime(debounce)).subscribe((value: string) => {
+      this.searchChange.emit(value);
     });
-  }
+  });
 }

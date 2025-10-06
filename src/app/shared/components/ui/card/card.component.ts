@@ -1,26 +1,6 @@
 import { Component, input, output } from '@angular/core';
 import { CardModule } from 'primeng/card';
 
-/**
- * 🎯 Simple Card Component - YAGNI Principle
- *
- * ========================================
- * KISS: Keep It Simple, Stupid
- * ========================================
- *
- * Solo lo que necesitas AHORA:
- * ✅ Título (opcional)
- * ✅ Subtítulo (opcional)
- * ✅ Imagen (opcional)
- * ✅ Contenido (ng-content)
- * ✅ Acciones (slot)
- *
- * 🚀 USAGE:
- * <app-card title="My Card" imageUrl="image.jpg">
- *   <p>Any content here...</p>
- *   <button card-action>Action</button>
- * </app-card>
- */
 @Component({
   selector: 'app-card',
   standalone: true,

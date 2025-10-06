@@ -20,6 +20,7 @@
   <app-page-header
     [title]="viewTitle()"
     [searchPlaceholder]="searchPlaceholder()"
+    [searchValue]="notesStore.searchTerm()"
     (searchChange)="onSearchChange($event)" />
 
   <!-- Tag Info Banner -->

@@ -15,7 +15,10 @@
       (formCancel)="onCancelForm()" />
   </p-dialog>
 
-  <app-page-header [title]="viewTitle()" (searchChange)="onSearchChange($event)" />
+  <app-page-header
+    [title]="viewTitle()"
+    [searchValue]="notesStore.searchTerm()"
+    (searchChange)="onSearchChange($event)" />
 
   <!-- Main Content Area -->
   <div class="flex flex-1 overflow-hidden">

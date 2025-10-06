@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Button } from 'primeng/button';
 import { filter } from 'rxjs/operators';
 
@@ -20,11 +21,14 @@ import { TagsStore } from '@features/notes/store/tags.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class ArchivedComponent {
+  private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly confirmationService = inject(CONFIRMATION_SERVICE);
   private readonly notificationService = inject(NOTIFICATION_SERVICE);
   readonly notesStore = inject(NotesStore);
   readonly tagsStore = inject(TagsStore);
+
+  private readonly queryParams = toSignal(this.route.queryParamMap);
 
   readonly allTags = this.tagsStore.tags;
 
@@ -33,10 +37,16 @@ export default class ArchivedComponent {
    * Ensures only archived notes are displayed in this view
    */
   private readonly syncArchivedView = effect(() => {
-    // Always show archived notes in this view
     this.notesStore.setShowArchived(true);
 
     this.notesStore.setFilterTag(null);
+  });
+
+  private readonly syncSearchFromUrl = effect(() => {
+    const params = this.queryParams();
+    const search = params?.get('search') || '';
+
+    this.notesStore.searchNotes(search);
   });
 
   readonly archivedNotes = this.notesStore.filteredNotes;
@@ -45,17 +55,17 @@ export default class ArchivedComponent {
 
   onSearchChange(searchTerm: string): void {
     this.notesStore.searchNotes(searchTerm);
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { search: searchTerm || null },
+      queryParamsHandling: 'merge',
+    });
   }
 
   onNoteClick(note: Note): void {
     this.notesStore.setSelectedNote(note);
   }
-
-  // onEditNote(_note: Note): void {
-  //   // Archived notes cannot be edited directly
-  //   // User must unarchive first
-  //   console.warn('Archived notes cannot be edited. Please unarchive the note first.');
-  // }
 
   onUnarchiveNote(note: Note): void {
     this.confirmationService
@@ -67,7 +77,7 @@ export default class ArchivedComponent {
         next: () => {
           this.notesStore.toggleArchive(note.id);
           this.notificationService.success(NOTIFICATIONS_MESSAGES.NOTE_UNARCHIVED);
-          // Clear selection after unarchive
+
           if (this.selectedNote()?.id === note.id) {
             this.notesStore.setSelectedNote(null);
           }

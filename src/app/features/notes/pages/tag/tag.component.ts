@@ -53,6 +53,7 @@ export default class TagComponent {
   readonly formKey = signal<number>(0);
 
   private readonly routeParams = toSignal(this.route.paramMap);
+  private readonly queryParams = toSignal(this.route.queryParamMap);
 
   readonly allTags = this.tagsStore.tags;
 
@@ -64,9 +65,19 @@ export default class TagComponent {
   private readonly syncTagFilterWithRoute = effect(() => {
     const tagId = this.currentTagId();
     this.notesStore.setFilterTag(tagId);
-    this.notesStore.setShowArchived(false);
-
     this.notesStore.setSelectedNote(null);
+
+    const params = this.queryParams();
+    if (!params?.has('search')) {
+      this.notesStore.searchNotes('');
+    }
+  });
+
+  private readonly syncSearchFromUrl = effect(() => {
+    const params = this.queryParams();
+    const search = params?.get('search') || '';
+    // Always sync search from URL (including empty string to clear)
+    this.notesStore.searchNotes(search);
   });
 
   readonly currentTag = computed(() => {
@@ -92,6 +103,12 @@ export default class TagComponent {
 
   onSearchChange(searchTerm: string): void {
     this.notesStore.searchNotes(searchTerm);
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { search: searchTerm || null },
+      queryParamsHandling: 'merge',
+    });
   }
 
   onCreateNote(): void {

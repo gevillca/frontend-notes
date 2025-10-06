@@ -60,25 +60,23 @@ export class LayoutService {
 
   private initialized = false;
 
-  constructor() {
-    effect(() => {
-      const config = this.layoutConfig();
-      if (config) {
-        this.onConfigUpdate();
-      }
-    });
+  private readonly syncConfigEffect = effect(() => {
+    const config = this.layoutConfig();
+    if (config) {
+      this.onConfigUpdate();
+    }
+  });
 
-    effect(() => {
-      const config = this.layoutConfig();
+  private readonly darkModeTransitionEffect = effect(() => {
+    const config = this.layoutConfig();
 
-      if (!this.initialized || !config) {
-        this.initialized = true;
-        return;
-      }
+    if (!this.initialized || !config) {
+      this.initialized = true;
+      return;
+    }
 
-      this.handleDarkModeTransition(config);
-    });
-  }
+    this.handleDarkModeTransition(config);
+  });
 
   private handleDarkModeTransition(config: LayoutConfig): void {
     if (

@@ -24,6 +24,7 @@ export class PageHeaderComponent {
   title = input.required<string>();
   showSearch = input<boolean>(true);
   searchPlaceholder = input<string>('Search by title, content, or tags...');
+  searchValue = input<string>('');
   showSettings = input<boolean>(true);
 
   searchChange = output<string>();

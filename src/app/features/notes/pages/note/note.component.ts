@@ -53,6 +53,7 @@ export default class NoteComponent {
   readonly editingNote = signal<Note | null>(null);
 
   private readonly routeParams = toSignal(this.route.paramMap);
+  private readonly queryParams = toSignal(this.route.queryParamMap);
   private readonly routeUrl = toSignal(
     this.route.url.pipe(map((segments) => segments.map((segment) => segment.path))),
   );
@@ -77,6 +78,17 @@ export default class NoteComponent {
   private readonly syncArchivedViewWithRoute = effect(() => {
     const isArchived = this.isArchivedView();
     this.notesStore.setShowArchived(isArchived);
+
+    if (isArchived) {
+      this.notesStore.searchNotes('');
+    }
+  });
+
+  private readonly syncSearchFromUrl = effect(() => {
+    const params = this.queryParams();
+    const search = params?.get('search') || '';
+
+    this.notesStore.searchNotes(search);
   });
 
   filteredNotes = this.notesStore.filteredNotes;
@@ -95,6 +107,12 @@ export default class NoteComponent {
 
   onSearchChange(searchTerm: string): void {
     this.notesStore.searchNotes(searchTerm);
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { search: searchTerm || null },
+      queryParamsHandling: 'merge',
+    });
   }
 
   onCreateNote(): void {

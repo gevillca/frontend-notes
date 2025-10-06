@@ -3,6 +3,7 @@
   <app-page-header
     [title]="'Archived Notes'"
     [searchPlaceholder]="'Search in archived notes...'"
+    [searchValue]="notesStore.searchTerm()"
     (searchChange)="onSearchChange($event)" />
 
   <!-- Info Banner -->

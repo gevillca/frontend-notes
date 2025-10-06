@@ -5,9 +5,9 @@ import { Injectable } from '@angular/core';
 })
 export class StorageService {
   /**
-   * Guarda un valor en localStorage.
-   * @param key La clave bajo la cual se guardará el valor.
-   * @param value El valor a guardar. Se convertirá a JSON.
+   * Saves a value to localStorage.
+   * @param key The key under which to store the value.
+   * @param value The value to store, which will be stringified to JSON.
    */
   setItem(key: string, value: unknown): void {
     try {
@@ -18,9 +18,9 @@ export class StorageService {
   }
 
   /**
-   * Obtiene un valor desde localStorage.
-   * @param key La clave del valor a obtener.
-   * @returns El valor parseado desde JSON, o null si no se encuentra o hay un error.
+   * Retrieves a value from localStorage.
+   * @param key The key of the value to retrieve.
+   * @returns The parsed value, or null if not found or on error.
    */
   getItem<T>(key: string): T | null {
     try {
@@ -33,8 +33,8 @@ export class StorageService {
   }
 
   /**
-   * Elimina un valor de localStorage.
-   * @param key La clave del valor a eliminar.
+   * Removes an item from localStorage.
+   * @param key The key of the item to remove.
    */
   removeItem(key: string): void {
     localStorage.removeItem(key);
