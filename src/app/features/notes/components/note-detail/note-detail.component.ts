@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { Tag as PrimeTag } from 'primeng/tag';
+import { TooltipModule } from 'primeng/tooltip';
 
 import { DateFormatPipe } from '@shared/pipes/date-format.pipe';
 import { Note } from '@features/notes/interfaces/notes.interface';
@@ -9,7 +10,7 @@ import { TagsStore } from '@features/notes/store/tags.store';
 
 @Component({
   selector: 'app-note-detail',
-  imports: [ButtonModule, PrimeTag, DateFormatPipe],
+  imports: [ButtonModule, PrimeTag, TooltipModule, DateFormatPipe],
   templateUrl: './note-detail.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

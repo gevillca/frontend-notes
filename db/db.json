@@ -20,6 +20,20 @@
       "password": "user12345",
       "avatarUrl": "https://i.pravatar.cc/150?u=user-03",
       "createdAt": "2025-03-10T09:00:00.000Z"
+    },
+    {
+      "id": "user-04",
+      "email": "admin@sistema.com",
+      "password": "12345678",
+      "avatarUrl": "https://i.pravatar.cc/150?u=admin@sistema.com",
+      "createdAt": "2025-10-06T04:32:35.554Z"
+    },
+    {
+      "id": "user-05",
+      "email": "test@gmail.com",
+      "password": "12345678",
+      "avatarUrl": "https://i.pravatar.cc/150?u=test@gmail.com",
+      "createdAt": "2025-10-06T04:33:09.425Z"
     }
   ],
   "tags": [
@@ -120,7 +134,9 @@
       "notebookId": "nb-01",
       "title": "Angular Signals Deep Dive",
       "content": "Understanding Angular Signals:\n\n1. Reactive Primitives\n- signal() for writable state\n- computed() for derived state\n- effect() for side effects\n\n2. Benefits\n- Fine-grained reactivity\n- Better performance than Zone.js\n- Simplified change detection\n\n3. Best Practices\n- Use computed for derived values\n- Avoid effects for state updates\n- Prefer OnPush change detection\n\nTODO: Migrate legacy components to signals",
-      "tags": ["tag-2"],
+      "tags": [
+        "tag-2"
+      ],
       "ownerId": "user-01",
       "sharedWith": [],
       "attachments": [],
@@ -138,7 +154,9 @@
       "notebookId": "nb-01",
       "title": "Europe Trip 2025",
       "content": "Plan del viaje a Europa:\n\n**Ciudades**: París, Roma, Barcelona, Amsterdam\n**Duración**: 15 días (Julio 2025)\n**Presupuesto**: $3,500 por persona\n\nActividades:\n- Tour Eiffel y Louvre (París)\n- Coliseo y Vaticano (Roma)\n- Sagrada Familia (Barcelona)\n- Canales y museos (Amsterdam)\n\nPendiente: Reservar vuelos y hoteles",
-      "tags": ["tag-9"],
+      "tags": [
+        "tag-9"
+      ],
       "ownerId": "user-01",
       "sharedWith": [],
       "attachments": [],
@@ -156,7 +174,11 @@
       "notebookId": "nb-01",
       "title": "Healthy Recipes Collection",
       "content": "**Breakfast**\n- Greek Yogurt with Berries and Honey\n- Avocado Toast with Poached Egg\n- Overnight Oats with Almonds\n\n**Lunch**\n- Quinoa Buddha Bowl\n- Grilled Chicken Salad\n- Mediterranean Wrap\n\n**Dinner**\n- Baked Salmon with Vegetables\n- Turkey Meatballs with Zucchini Noodles\n- Vegetarian Stir-Fry",
-      "tags": ["tag-1", "tag-7", "tag-4"],
+      "tags": [
+        "tag-1",
+        "tag-7",
+        "tag-4"
+      ],
       "ownerId": "user-01",
       "sharedWith": [
         {
@@ -179,7 +201,10 @@
       "notebookId": "nb-01",
       "title": "Gym Routine - September",
       "content": "**Split de entrenamiento**\n\nLunes: Pecho + Tríceps\n- Bench Press 4x8\n- Incline Dumbbell Press 3x10\n- Cable Flyes 3x12\n- Tricep Dips 3x10\n\nMiércoles: Espalda + Bíceps\n- Pull-ups 4x8\n- Barbell Rows 4x8\n- Lat Pulldown 3x10\n- Bicep Curls 3x12\n\nViernes: Piernas + Hombros\n- Squats 4x8\n- Leg Press 3x10\n- Shoulder Press 4x8\n- Lateral Raises 3x12\n\nDomingo: Cardio + Core",
-      "tags": ["tag-3", "tag-4"],
+      "tags": [
+        "tag-3",
+        "tag-4"
+      ],
       "ownerId": "user-01",
       "sharedWith": [],
       "attachments": [],
@@ -197,7 +222,10 @@
       "notebookId": "nb-01",
       "title": "Weekly Shopping List",
       "content": "**Frutas y Verduras**\n- Manzanas\n- Bananas\n- Espinaca\n- Tomates\n- Aguacates\n\n**Proteínas**\n- Pollo\n- Salmón\n- Huevos\n- Greek Yogurt\n\n**Otros**\n- Pan integral\n- Arroz\n- Pasta\n- Aceite de oliva\n- Café",
-      "tags": ["tag-8", "tag-4"],
+      "tags": [
+        "tag-8",
+        "tag-4"
+      ],
       "ownerId": "user-01",
       "sharedWith": [],
       "attachments": [],
@@ -208,32 +236,40 @@
       "metadata": {
         "wordCount": 55,
         "readTimeMin": 1
-      }
+      },
+      "updatedAt": "2025-10-06T04:29:30.930Z"
     },
     {
       "id": "note-006",
       "notebookId": "nb-02",
       "title": "TypeScript 5.0 New Features",
       "content": "Novedades de TypeScript 5.0:\n\n1. Decorators (Stage 3)\n- Nueva sintaxis estándar de decoradores\n- Compatible con TC39 proposal\n\n2. const Type Parameters\n- Mejora la inferencia de tipos\n- Útil para funciones genéricas\n\n3. Better Enum Support\n- Enums más seguros\n- Mejor interoperabilidad con JavaScript\n\n4. Performance Improvements\n- Compilación más rápida\n- Menor uso de memoria\n\nEstado: Completado - Migración finalizada en Q1 2025",
-      "tags": ["tag-2", "tag-10"],
+      "tags": [
+        "tag-2",
+        "tag-10"
+      ],
       "ownerId": "user-01",
       "sharedWith": [],
       "attachments": [],
-      "archived": true,
+      "archived": false,
       "isFavorite": false,
       "lastEdited": "2025-03-28T15:00:00.000Z",
       "version": 2,
       "metadata": {
         "wordCount": 105,
         "readTimeMin": 3
-      }
+      },
+      "updatedAt": "2025-10-06T04:00:19.430Z"
     },
     {
       "id": "note-007",
       "notebookId": "nb-03",
       "title": "Frontend Best Practices 2025",
       "content": "Mejores prácticas para desarrollo frontend:\n\n**Performance**\n- Lazy loading de componentes\n- Code splitting estratégico\n- Optimización de imágenes (WebP)\n- Caché inteligente\n\n**Accesibilidad**\n- ARIA labels correctos\n- Navegación por teclado\n- Contraste de colores WCAG AA\n- Textos alternativos\n\n**SEO**\n- Meta tags dinámicos\n- Schema markup\n- URLs semánticas\n- Sitemap actualizado\n\nReferencias: web.dev, MDN",
-      "tags": ["tag-2", "tag-6"],
+      "tags": [
+        "tag-2",
+        "tag-6"
+      ],
       "ownerId": "user-02",
       "sharedWith": [
         {
@@ -241,7 +277,9 @@
           "role": "editor"
         }
       ],
-      "attachments": ["att-02"],
+      "attachments": [
+        "att-02"
+      ],
       "archived": false,
       "isFavorite": true,
       "lastEdited": "2025-09-18T11:45:00.000Z",
@@ -256,7 +294,9 @@
       "notebookId": "nb-03",
       "title": "Personal Goals 2025",
       "content": "Objetivos personales para este año:\n\n**Profesional**\n✓ Aprender Angular Signals\n✓ Contribuir a proyectos Open Source\n- Obtener certificación AWS\n- Crear mi propio blog técnico\n\n**Personal**\n- Leer 24 libros (2 por mes)\n- Correr un maratón\n- Aprender italiano básico\n- Viajar a 3 países nuevos\n\n**Salud**\n- Gym 4 veces por semana\n- Meditar 10 min diarios\n- Dormir 7-8 horas\n\nRevisión: Trimestral",
-      "tags": ["tag-5"],
+      "tags": [
+        "tag-5"
+      ],
       "ownerId": "user-02",
       "sharedWith": [],
       "attachments": [],
@@ -274,7 +314,10 @@
       "notebookId": "nb-03",
       "title": "Italian Cuisine Masterclass",
       "content": "Recetas italianas auténticas:\n\n**Pasta Carbonara** (Original romana)\n- Guanciale, no bacon\n- Pecorino Romano\n- Huevos enteros + yemas\n- Sin crema\n\n**Risotto al Funghi**\n- Caldo casero caliente\n- Mantequilla y parmesano al final\n- Cocción lenta 18-20 min\n\n**Tiramisú**\n- Mascarpone fresco\n- Café espresso fuerte\n- Savoiardi de calidad\n- Marsala (opcional)\n\nTips: Usar ingredientes de calidad, respetar las técnicas tradicionales",
-      "tags": ["tag-1", "tag-7"],
+      "tags": [
+        "tag-1",
+        "tag-7"
+      ],
       "ownerId": "user-02",
       "sharedWith": [],
       "attachments": [],
@@ -292,7 +335,10 @@
       "notebookId": "nb-04",
       "title": "React 18 Migration Notes",
       "content": "Migración a React 18 - Proyecto completado\n\n**Cambios principales**\n- Automatic batching habilitado\n- Concurrent rendering configurado\n- Suspense boundaries implementados\n- Transiciones para UX mejorada\n\n**Problemas encontrados**\n- Compatibilidad con react-router v5 → actualizar a v6\n- Tests con act() warnings → solucionado con @testing-library/react 13+\n- Third-party libs sin soporte → migramos a alternativas\n\n**Resultados**\n- 30% mejora en performance\n- Better UX con transiciones\n- Código más limpio\n\nEstado: ARCHIVADO - Migración completada en Febrero 2025",
-      "tags": ["tag-2", "tag-6"],
+      "tags": [
+        "tag-2",
+        "tag-6"
+      ],
       "ownerId": "user-02",
       "sharedWith": [],
       "attachments": [],
@@ -310,7 +356,9 @@
       "notebookId": "nb-05",
       "title": "Node.js Microservices Architecture",
       "content": "Arquitectura de microservicios con Node.js:\n\n**Servicios principales**\n1. Auth Service (JWT + Refresh Tokens)\n2. User Service (Profiles & Preferences)\n3. Product Service (Catalog)\n4. Order Service (E-commerce)\n5. Notification Service (Email/SMS)\n\n**Comunicación**\n- REST APIs para sync\n- RabbitMQ para async messaging\n- Redis para caché distribuida\n- PostgreSQL por servicio\n\n**DevOps**\n- Docker containers\n- Kubernetes orchestration\n- CI/CD con GitHub Actions\n- Monitoring con Prometheus + Grafana\n\nEstado: En producción desde Julio 2025",
-      "tags": ["tag-2"],
+      "tags": [
+        "tag-2"
+      ],
       "ownerId": "user-03",
       "sharedWith": [
         {
@@ -318,7 +366,9 @@
           "role": "viewer"
         }
       ],
-      "attachments": ["att-03"],
+      "attachments": [
+        "att-03"
+      ],
       "archived": false,
       "isFavorite": true,
       "lastEdited": "2025-09-10T13:25:00.000Z",
@@ -333,7 +383,10 @@
       "notebookId": "nb-05",
       "title": "Colombia Travel Guide",
       "content": "Guía de viaje por Colombia:\n\n**Bogotá** (3 días)\n- Candelaria (centro histórico)\n- Monserrate\n- Museo del Oro\n- Zona G (gastronomía)\n\n**Cartagena** (4 días)\n- Ciudad amurallada\n- Islas del Rosario\n- Playa Blanca\n- Getsemaní\n\n**Medellín** (3 días)\n- Comuna 13 (street art)\n- Parque Arví\n- Pueblito Paisa\n- Vida nocturna El Poblado\n\n**Eje Cafetero** (3 días)\n- Tour de café\n- Valle de Cocora\n- Salento\n- Aguas termales\n\nMejor época: Diciembre - Marzo o Junio - Agosto",
-      "tags": ["tag-9", "tag-5"],
+      "tags": [
+        "tag-9",
+        "tag-5"
+      ],
       "ownerId": "user-03",
       "sharedWith": [
         {
@@ -356,7 +409,10 @@
       "notebookId": "nb-05",
       "title": "Home Workout - No Equipment",
       "content": "Rutina de ejercicios en casa sin equipo:\n\n**Calentamiento** (5 min)\n- Jumping jacks\n- High knees\n- Arm circles\n- Dynamic stretches\n\n**Circuito** (3 rondas, 45s cada ejercicio, 15s descanso)\n1. Push-ups (regular o rodillas)\n2. Squats\n3. Plank\n4. Lunges alternadas\n5. Mountain climbers\n6. Bicycle crunches\n7. Burpees\n8. Superman hold\n\n**Cooldown** (5 min)\n- Estiramiento estático\n- Respiración profunda\n\nFrecuencia: 4-5 veces por semana\nDuración total: ~30 min",
-      "tags": ["tag-3", "tag-4"],
+      "tags": [
+        "tag-3",
+        "tag-4"
+      ],
       "ownerId": "user-03",
       "sharedWith": [],
       "attachments": [],
@@ -374,7 +430,9 @@
       "notebookId": "nb-05",
       "title": "Monthly Budget Tracker",
       "content": "Presupuesto mensual - Septiembre 2025:\n\n**Ingresos**: $4,500\n\n**Gastos Fijos** ($2,100)\n- Renta: $1,200\n- Servicios: $300\n- Internet/Móvil: $150\n- Seguro: $200\n- Gym: $80\n- Subscripciones: $170 (Netflix, Spotify, etc.)\n\n**Gastos Variables** ($1,200)\n- Comida: $600\n- Transporte: $250\n- Entretenimiento: $200\n- Ropa: $150\n\n**Ahorro/Inversión**: $1,200 (26.7%)\n- Emergency fund: $500\n- Inversiones: $500\n- Viajes: $200\n\nObjetivo: Mantener savings rate >25%",
-      "tags": ["tag-5"],
+      "tags": [
+        "tag-5"
+      ],
       "ownerId": "user-03",
       "sharedWith": [],
       "attachments": [],
@@ -392,7 +450,9 @@
       "notebookId": "nb-06",
       "title": "Docker Fundamentals - Course Notes",
       "content": "Notas del curso de Docker:\n\n**Conceptos básicos**\n- Containers vs VMs\n- Images y layers\n- Dockerfile syntax\n- Docker Hub registry\n\n**Comandos esenciales**\n- docker build -t myapp .\n- docker run -p 3000:3000 myapp\n- docker ps / docker stop\n- docker-compose up -d\n\n**Best practices**\n- Multi-stage builds\n- .dockerignore file\n- Small base images (alpine)\n- Security scanning\n\n**Proyecto final**\nCreado: API Node.js + PostgreSQL + Redis\nDesplegado en: AWS ECS\n\nEstado: Curso completado - Marzo 2025",
-      "tags": ["tag-2"],
+      "tags": [
+        "tag-2"
+      ],
       "ownerId": "user-03",
       "sharedWith": [],
       "attachments": [],
@@ -409,7 +469,10 @@
       "id": "note-1759692434339",
       "title": "test",
       "content": "## 🏃 Cómo usarlo\n\n### 1️⃣ Iniciar el servidor\n\nAbre una terminal y ejecuta:\n\n```bash\nnpm run api\n# o\nyarn api",
-      "tags": ["tag-2", "tag-1"],
+      "tags": [
+        "tag-2",
+        "tag-1"
+      ],
       "lastEdited": "2025-10-05T19:28:05.500Z",
       "version": 3,
       "archived": false,
@@ -418,6 +481,60 @@
       "notebookId": "nb-01",
       "sharedWith": [],
       "attachments": []
+    },
+    {
+      "id": "note-1759724070485",
+      "title": "sasd",
+      "content": "asdasasd",
+      "tags": [
+        "tag-8"
+      ],
+      "lastEdited": "2025-10-06T04:14:30.485Z",
+      "version": 1,
+      "archived": false,
+      "isFavorite": false,
+      "ownerId": "user-01",
+      "notebookId": "nb-01",
+      "sharedWith": [],
+      "attachments": [],
+      "createdAt": "2025-10-06T04:14:30.501Z",
+      "updatedAt": "2025-10-06T04:14:30.501Z"
+    },
+    {
+      "id": "note-018",
+      "title": "mi nota",
+      "content": "prueba",
+      "tags": [
+        "tag-2"
+      ],
+      "lastEdited": "2025-10-06T04:32:54.363Z",
+      "version": 1,
+      "archived": false,
+      "isFavorite": false,
+      "notebookId": "nb-01",
+      "sharedWith": [],
+      "attachments": [],
+      "ownerId": "user-04",
+      "createdAt": "2025-10-06T04:32:54.369Z",
+      "updatedAt": "2025-10-06T04:32:54.369Z"
+    },
+    {
+      "id": "note-019",
+      "title": "test 2",
+      "content": "asdasdasd",
+      "tags": [
+        "tag-3"
+      ],
+      "lastEdited": "2025-10-06T04:33:27.363Z",
+      "version": 2,
+      "archived": false,
+      "isFavorite": false,
+      "notebookId": "nb-01",
+      "sharedWith": [],
+      "attachments": [],
+      "ownerId": "user-05",
+      "createdAt": "2025-10-06T04:33:23.450Z",
+      "updatedAt": "2025-10-06T04:33:27.367Z"
     }
   ],
   "comments": [
@@ -590,7 +707,9 @@
       "showAvatars": true,
       "lastSearch": "angular signals",
       "lastFilter": {
-        "tags": ["tag-2"],
+        "tags": [
+          "tag-2"
+        ],
         "archived": false
       }
     },
@@ -602,7 +721,10 @@
       "showAvatars": true,
       "lastSearch": "react migration",
       "lastFilter": {
-        "tags": ["tag-6", "tag-2"],
+        "tags": [
+          "tag-6",
+          "tag-2"
+        ],
         "archived": false
       }
     },

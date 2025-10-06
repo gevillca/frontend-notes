@@ -53,7 +53,7 @@ export class Sidebar implements OnInit {
         items: this.tags().map((tag) => ({
           label: tag.name,
           icon: 'pi pi-tag',
-          routerLink: ['/notes/tag', tag.name],
+          routerLink: ['/notes/tag', tag.id],
         })),
       },
     ];

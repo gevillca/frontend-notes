@@ -15,6 +15,8 @@ import { AuthService } from '@features/auth/services/auth.service';
 import { Note } from '../interfaces/notes.interface';
 import { NotesService } from '../services/notes.service';
 
+import { TagsStore } from './tags.store';
+
 interface NotesState {
   notes: Note[];
   selectedNote: Note | null;
@@ -39,15 +41,27 @@ export const NotesStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
 
-  withComputed((store) => ({
+  withComputed((store, tagsStore = inject(TagsStore)) => ({
     /**
      * Filters notes by: archived status, tag, and search term (title/content/tags)
+
      */
     filteredNotes: computed(() => {
       let notes = store.notes();
       const searchTerm = store.searchTerm().toLowerCase();
       const filterTag = store.filterTag();
       const showArchived = store.showArchived();
+      const allTags = tagsStore.tags();
+
+      // Helper function to get tag names from tag IDs
+      const getTagNames = (tagIds: string[]): string[] => {
+        return tagIds
+          .map((tagId) => {
+            const tag = allTags.find((t) => t.id === tagId);
+            return tag ? tag.name.toLowerCase() : tagId.toLowerCase();
+          })
+          .filter(Boolean);
+      };
 
       // Filter by archived status
       notes = notes.filter((note) => note.archived === showArchived);
@@ -57,14 +71,16 @@ export const NotesStore = signalStore(
         notes = notes.filter((note) => note.tags.includes(filterTag));
       }
 
-      // Filter by search term
+      // Filter by search term (searches in title, content, and tag names)
       if (searchTerm) {
-        notes = notes.filter(
-          (note) =>
-            note.title.toLowerCase().includes(searchTerm) ||
-            note.content.toLowerCase().includes(searchTerm) ||
-            note.tags.some((tag) => tag.toLowerCase().includes(searchTerm)),
-        );
+        notes = notes.filter((note) => {
+          const titleMatch = note.title.toLowerCase().includes(searchTerm);
+          const contentMatch = note.content.toLowerCase().includes(searchTerm);
+          const tagNames = getTagNames(note.tags);
+          const tagMatch = tagNames.some((tagName) => tagName.includes(searchTerm));
+
+          return titleMatch || contentMatch || tagMatch;
+        });
       }
 
       return notes;

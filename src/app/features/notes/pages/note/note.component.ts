@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Button } from 'primeng/button';
@@ -8,6 +15,8 @@ import { filter, map } from 'rxjs/operators';
 
 import { PageHeaderComponent } from '@shared/components/ui/page-header/page-header.component';
 import { CONFIRMATION_SERVICE } from '@shared/services/ui/confirmation/interface/confirmation.interface';
+import { NOTIFICATIONS_MESSAGES } from '@shared/services/ui/notification/constants/notification-messages.constants';
+import { NOTIFICATION_SERVICE } from '@shared/services/ui/notification/interface/notification.interface';
 import {
   NoteDetailComponent,
   NoteFormComponent,
@@ -36,6 +45,7 @@ export default class NoteComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly confirmationService = inject(CONFIRMATION_SERVICE);
+  private readonly notificationService = inject(NOTIFICATION_SERVICE);
   readonly notesStore = inject(NotesStore);
   readonly tagsStore = inject(TagsStore);
 
@@ -51,18 +61,22 @@ export default class NoteComponent {
 
   currentTag = computed(() => {
     const params = this.routeParams();
-    const tag = params?.get('tag') || null;
-
-    this.notesStore.setFilterTag(tag);
-    return tag;
+    return params?.get('tag') || null;
   });
 
   isArchivedView = computed(() => {
     const url = this.routeUrl();
-    const isArchived = url?.includes('archived') || false;
+    return url?.includes('archived') || false;
+  });
 
+  private readonly syncTagFilterWithRoute = effect(() => {
+    const tag = this.currentTag();
+    this.notesStore.setFilterTag(tag);
+  });
+
+  private readonly syncArchivedViewWithRoute = effect(() => {
+    const isArchived = this.isArchivedView();
     this.notesStore.setShowArchived(isArchived);
-    return isArchived;
   });
 
   filteredNotes = this.notesStore.filteredNotes;
@@ -102,17 +116,17 @@ export default class NoteComponent {
 
     if (isEditing) {
       this.notesStore.updateNote({ id: noteData.id!, note: noteData });
+      this.notificationService.success(NOTIFICATIONS_MESSAGES.NOTE_UPDATED);
     } else {
       this.notesStore.createNote(noteData);
+      this.notificationService.success(NOTIFICATIONS_MESSAGES.NOTE_CREATED);
     }
 
-    this.showNoteForm.set(false);
-    this.editingNote.set(null);
+    this.closeNoteForm();
   }
 
   onCancelForm(): void {
-    this.showNoteForm.set(false);
-    this.editingNote.set(null);
+    this.closeNoteForm();
   }
 
   onArchiveNote(note: Note): void {
@@ -124,6 +138,7 @@ export default class NoteComponent {
       .subscribe({
         next: () => {
           this.notesStore.toggleArchive(note.id);
+          this.notificationService.success(NOTIFICATIONS_MESSAGES.NOTE_ARCHIVED);
         },
       });
   }
@@ -137,7 +152,13 @@ export default class NoteComponent {
       .subscribe({
         next: () => {
           this.notesStore.deleteNote(note.id);
+          this.notificationService.success(NOTIFICATIONS_MESSAGES.NOTE_DELETED);
         },
       });
+  }
+
+  private closeNoteForm(): void {
+    this.showNoteForm.set(false);
+    this.editingNote.set(null);
   }
 }

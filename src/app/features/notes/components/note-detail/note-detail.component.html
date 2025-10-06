@@ -3,12 +3,23 @@
     <!-- Actions Bar -->
     <div
       class="border-b border-surface p-4 flex items-center gap-2 bg-surface-50 dark:bg-surface-900">
-      <p-button
-        label="Edit"
-        icon="pi pi-pencil"
-        size="small"
-        [outlined]="true"
-        (onClick)="onEdit()" />
+      @if (!note()!.archived) {
+        <p-button
+          label="Edit"
+          icon="pi pi-pencil"
+          size="small"
+          [outlined]="true"
+          (onClick)="onEdit()" />
+      } @else {
+        <p-button
+          label="Edit"
+          icon="pi pi-pencil"
+          size="small"
+          [outlined]="true"
+          [disabled]="true"
+          pTooltip="Unarchive this note to edit it"
+          tooltipPosition="bottom" />
+      }
 
       @if (!note()!.archived) {
         <p-button

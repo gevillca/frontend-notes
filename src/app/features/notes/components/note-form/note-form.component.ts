@@ -6,6 +6,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { TextareaModule } from 'primeng/textarea';
 
+import { AuthService } from '@features/auth/services/auth.service';
 import { Note } from '@features/notes/interfaces/notes.interface';
 import { Tag } from '@features/notes/interfaces/tag.interface';
 
@@ -24,9 +25,11 @@ import { Tag } from '@features/notes/interfaces/tag.interface';
 })
 export class NoteFormComponent {
   private readonly formBuilder = inject(FormBuilder);
+  private readonly authService = inject(AuthService);
 
   note = input<Note | null>(null);
   availableTags = input<Tag[]>([]);
+  preSelectedTags = input<string[]>([]);
 
   save = output<Partial<Note>>();
   formCancel = output<void>();
@@ -37,12 +40,10 @@ export class NoteFormComponent {
     tags: [[] as string[]],
   });
 
-  /**
-   * Synchronizes note input signal with form state
-   * Patches form when editing, resets when creating new note
-   */
   private readonly syncFormWithNoteEffect = effect(() => {
     const currentNote = this.note();
+    const preTags = this.preSelectedTags();
+
     if (currentNote) {
       this.noteForm.patchValue({
         title: currentNote.title,
@@ -53,7 +54,7 @@ export class NoteFormComponent {
       this.noteForm.reset({
         title: '',
         content: '',
-        tags: [],
+        tags: preTags || [],
       });
     }
   });
@@ -100,9 +101,14 @@ export class NoteFormComponent {
       };
       this.save.emit(noteData);
     } else {
-      // Creation mode: Generate new note with all required fields
+      const currentUser = this.authService.user();
+
+      if (!currentUser) {
+        console.error('Cannot create note: User not authenticated');
+        return;
+      }
+
       const noteData: Partial<Note> = {
-        id: 'note-' + Date.now(),
         title: formValue.title.trim(),
         content: formValue.content.trim(),
         tags: formValue.tags,
@@ -110,7 +116,6 @@ export class NoteFormComponent {
         version: 1,
         archived: false,
         isFavorite: false,
-        ownerId: 'user-01', // TODO: Should come from auth service
         notebookId: 'nb-01', // TODO: Should be configurable by user
         sharedWith: [],
         attachments: [],
@@ -121,10 +126,5 @@ export class NoteFormComponent {
 
   onCancel(): void {
     this.formCancel.emit();
-  }
-
-  formatDate(date?: Date): string {
-    if (!date) return '';
-    return new Date(date).toLocaleDateString();
   }
 }

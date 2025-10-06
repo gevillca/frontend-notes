@@ -12,10 +12,10 @@
       [note]="editingNote()"
       [availableTags]="allTags()"
       (save)="onSaveNote($event)"
-      (formCancel)="onCancelForm()"></app-note-form>
+      (formCancel)="onCancelForm()" />
   </p-dialog>
 
-  <app-page-header [title]="viewTitle()" (searchChange)="onSearchChange($event)"></app-page-header>
+  <app-page-header [title]="viewTitle()" (searchChange)="onSearchChange($event)" />
 
   <!-- Main Content Area -->
   <div class="flex flex-1 overflow-hidden">
@@ -56,7 +56,7 @@
                 [note]="note"
                 [allTags]="allTags()"
                 [isSelected]="selectedNote()?.id === note.id"
-                (noteClick)="onNoteClick($event)"></app-note-list-item>
+                (noteClick)="onNoteClick($event)" />
             }
           </div>
         }
