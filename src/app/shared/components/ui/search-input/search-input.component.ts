@@ -1,9 +1,20 @@
-import { ChangeDetectionStrategy, Component, effect, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  effect,
+  inject,
+  input,
+  output,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { IconField } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { debounceTime } from 'rxjs/operators';
+
+import { SEARCH_CONFIG } from '@shared/constants/query-params.constants';
 
 /**
  * Generic reusable search input using Reactive Forms
@@ -22,14 +33,20 @@ import { debounceTime } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SearchInputComponent {
-  placeholder = input<string>('Search...');
-  debounceTime = input<number>(300);
+  private readonly destroyRef = inject(DestroyRef);
+
+  placeholder = input<string>(SEARCH_CONFIG.PLACEHOLDER_DEFAULT);
+  debounceTime = input<number>(SEARCH_CONFIG.DEBOUNCE_TIME);
   value = input<string>('');
 
   searchChange = output<string>();
 
   searchControl = new FormControl<string>('', { nonNullable: true });
 
+  /**
+   * Synchronizes the input value from parent component with the form control.
+   * Prevents infinite loops by checking if values are different and not emitting events.
+   */
   private readonly syncValueEffect = effect(() => {
     const initialValue = this.value();
     if (initialValue !== this.searchControl.value) {
@@ -37,11 +54,15 @@ export class SearchInputComponent {
     }
   });
 
-  private readonly searchEffect = effect(() => {
-    const debounce = this.debounceTime();
-
-    this.searchControl.valueChanges.pipe(debounceTime(debounce)).subscribe((value: string) => {
-      this.searchChange.emit(value);
-    });
-  });
+  constructor() {
+    /**
+     * Emits search changes with debounce.
+     * Uses takeUntilDestroyed to prevent memory leaks.
+     */
+    this.searchControl.valueChanges
+      .pipe(debounceTime(this.debounceTime()), takeUntilDestroyed(this.destroyRef))
+      .subscribe((value: string) => {
+        this.searchChange.emit(value);
+      });
+  }
 }

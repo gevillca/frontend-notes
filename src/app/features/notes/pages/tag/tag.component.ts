@@ -66,17 +66,12 @@ export default class TagComponent {
     const tagId = this.currentTagId();
     this.notesStore.setFilterTag(tagId);
     this.notesStore.setSelectedNote(null);
-
-    const params = this.queryParams();
-    if (!params?.has('search')) {
-      this.notesStore.searchNotes('');
-    }
+    this.notesStore.setShowArchived(false);
   });
 
   private readonly syncSearchFromUrl = effect(() => {
     const params = this.queryParams();
     const search = params?.get('search') || '';
-    // Always sync search from URL (including empty string to clear)
     this.notesStore.searchNotes(search);
   });
 
