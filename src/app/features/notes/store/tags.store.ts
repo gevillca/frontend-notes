@@ -1,4 +1,4 @@
-import { computed, inject } from '@angular/core';
+import { computed, effect, inject } from '@angular/core';
 import {
   patchState,
   signalStore,
@@ -9,6 +9,8 @@ import {
 } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { catchError, debounceTime, distinctUntilChanged, of, pipe, switchMap, tap } from 'rxjs';
+
+import { AuthService } from '@features/auth/services/auth.service';
 
 import { Tag } from '../interfaces/tag.interface';
 import { TagsService } from '../services/tags.service';
@@ -217,8 +219,14 @@ export const TagsStore = signalStore(
   })),
 
   withHooks({
-    onInit(store) {
+    onInit(store, authService = inject(AuthService)) {
       store.loadTags();
+
+      effect(() => {
+        const authStatus = authService.authStatus();
+        if (authStatus === 'authenticated') store.loadTags();
+        if (authStatus === 'not-authenticated') store.reset();
+      });
     },
   }),
 );

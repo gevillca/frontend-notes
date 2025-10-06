@@ -1,4 +1,4 @@
-import { computed, inject } from '@angular/core';
+import { computed, effect, inject } from '@angular/core';
 import {
   patchState,
   signalStore,
@@ -9,6 +9,8 @@ import {
 } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { catchError, debounceTime, distinctUntilChanged, of, pipe, switchMap, tap } from 'rxjs';
+
+import { AuthService } from '@features/auth/services/auth.service';
 
 import { Note } from '../interfaces/notes.interface';
 import { NotesService } from '../services/notes.service';
@@ -256,8 +258,14 @@ export const NotesStore = signalStore(
   })),
 
   withHooks({
-    onInit(store) {
+    onInit(store, authService = inject(AuthService)) {
       store.loadNotes();
+
+      effect(() => {
+        const authStatus = authService.authStatus();
+        if (authStatus === 'authenticated') store.loadNotes();
+        if (authStatus === 'not-authenticated') store.reset();
+      });
     },
   }),
 );
