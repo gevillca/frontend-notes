@@ -2,11 +2,11 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MessageService } from 'primeng/api';
 
-import { NOTIFICATION_SERVICE, NotificationService } from './interface/notification.interface';
+import { Notification, NOTIFICATION_SERVICE } from './interface/notification.interface';
 import { NotificationServiceImpl } from './notification.service';
 
 describe('NotificationServiceImpl', () => {
-  let service: NotificationService;
+  let service: Notification;
   let messageServiceSpy: jasmine.SpyObj<MessageService>;
 
   beforeEach(() => {

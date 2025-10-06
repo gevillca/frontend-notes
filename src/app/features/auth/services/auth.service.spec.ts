@@ -3,8 +3,11 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { environment } from '@environments/environment.development';
 
 import { StorageService } from '@shared/services/data/storage/storage.service';
+
+import { AuthResponse } from '../interfaces/auth-response.interface';
 
 import { AuthService } from './auth.service';
 
@@ -12,6 +15,7 @@ describe('AuthService', () => {
   let service: AuthService;
   let httpMock: HttpTestingController;
   let storageService: jasmine.SpyObj<StorageService>;
+  const baseUrl = `${environment.apiUrl}/auth`;
 
   beforeEach(() => {
     const storageServiceSpy = jasmine.createSpyObj('StorageService', [
@@ -19,6 +23,8 @@ describe('AuthService', () => {
       'setItem',
       'removeItem',
     ]);
+
+    storageServiceSpy.getItem.and.returnValue(null);
 
     TestBed.configureTestingModule({
       providers: [
@@ -33,9 +39,15 @@ describe('AuthService', () => {
     service = TestBed.inject(AuthService);
     httpMock = TestBed.inject(HttpTestingController);
     storageService = TestBed.inject(StorageService) as jasmine.SpyObj<StorageService>;
+
+    const initialRequests = httpMock.match(() => true);
+    initialRequests.forEach((req) => req.flush(null, { status: 401, statusText: 'Unauthorized' }));
   });
 
   afterEach(() => {
+    const pendingRequests = httpMock.match(() => true);
+    pendingRequests.forEach((req) => req.flush(null, { status: 401, statusText: 'Unauthorized' }));
+
     httpMock.verify();
   });
 
@@ -44,54 +56,45 @@ describe('AuthService', () => {
   });
 
   it('should login successfully with valid credentials', (done) => {
-    const mockUsers = [
-      {
+    const mockResponse: AuthResponse = {
+      token: 'fake-jwt-token',
+      user: {
         id: 'user-1',
         email: 'test@test.com',
-        password: 'password123',
         avatarUrl: 'avatar.jpg',
         createdAt: new Date(),
       },
-    ];
+    };
 
     service.login('test@test.com', 'password123').subscribe({
       next: (result) => {
         expect(result).toBe(true);
-        expect(storageService.setItem).toHaveBeenCalledWith('token', jasmine.any(String));
+        expect(storageService.setItem).toHaveBeenCalledWith('token', 'fake-jwt-token');
         done();
       },
     });
 
-    const req = httpMock.expectOne((request) =>
-      request.url.includes('/users?email=test@test.com&password=password123'),
-    );
-    expect(req.request.method).toBe('GET');
-    req.flush(mockUsers);
+    const req = httpMock.expectOne(`${baseUrl}/login`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ email: 'test@test.com', password: 'password123' });
+    req.flush(mockResponse);
   });
 
   it('should fail login with invalid credentials', (done) => {
     service.login('invalid@test.com', 'wrongpassword').subscribe({
+      next: () => fail('should have failed'),
       error: (error) => {
         expect(error.message).toBe('Invalid email or password');
         done();
       },
     });
 
-    const req = httpMock.expectOne((request) =>
-      request.url.includes('/users?email=invalid@test.com&password=wrongpassword'),
-    );
-    req.flush([]);
+    const req = httpMock.expectOne(`${baseUrl}/login`);
+    expect(req.request.method).toBe('POST');
+    req.flush({ msg: 'Invalid email or password' }, { status: 401, statusText: 'Unauthorized' });
   });
 
   it('should register successfully with new email', (done) => {
-    const newUser = {
-      id: 'user-123',
-      email: 'new@test.com',
-      password: 'password123',
-      avatarUrl: 'avatar.jpg',
-      createdAt: new Date(),
-    };
-
     service.register('new@test.com', 'password123').subscribe({
       next: (result) => {
         expect(result).toBe(true);
@@ -99,40 +102,24 @@ describe('AuthService', () => {
       },
     });
 
-    // First request to check if user exists
-    const checkReq = httpMock.expectOne((request) =>
-      request.url.includes('/users?email=new@test.com'),
-    );
-    checkReq.flush([]);
-
-    // Second request to create user
-    const createReq = httpMock.expectOne((request) => request.url.includes('/users'));
-    expect(createReq.request.method).toBe('POST');
-    createReq.flush(newUser);
+    const req = httpMock.expectOne(`${baseUrl}/register`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ email: 'new@test.com', password: 'password123' });
+    req.flush({});
   });
 
   it('should fail registration with existing email', (done) => {
-    const existingUser = [
-      {
-        id: 'user-1',
-        email: 'existing@test.com',
-        password: 'password123',
-        avatarUrl: 'avatar.jpg',
-        createdAt: new Date(),
-      },
-    ];
-
     service.register('existing@test.com', 'password123').subscribe({
+      next: () => fail('should have failed'),
       error: (error) => {
         expect(error.message).toBe('Email already registered');
         done();
       },
     });
 
-    const req = httpMock.expectOne((request) =>
-      request.url.includes('/users?email=existing@test.com'),
-    );
-    req.flush(existingUser);
+    const req = httpMock.expectOne(`${baseUrl}/register`);
+    expect(req.request.method).toBe('POST');
+    req.flush({ msg: 'Email already registered' }, { status: 400, statusText: 'Bad Request' });
   });
 
   it('should logout and clear auth state', () => {
@@ -141,21 +128,42 @@ describe('AuthService', () => {
     expect(storageService.removeItem).toHaveBeenCalledWith('token');
   });
 
-  it('should return false when token is invalid in checkStatus', () => {
+  it('should return false when token is invalid in checkStatus', (done) => {
     storageService.getItem.and.returnValue(null);
 
     service.checkStatus().subscribe((result) => {
       expect(result).toBe(false);
+      done();
     });
   });
 
-  it('should return true when token is valid in checkStatus', () => {
-    const validToken =
-      'mock.' + btoa(JSON.stringify({ userId: '123', exp: Date.now() + 10000 })) + '.signature';
+  it('should return true when token is valid in checkStatus', (done) => {
+    const validToken = 'valid-token';
     storageService.getItem.and.returnValue(validToken);
 
-    service.checkStatus().subscribe((result) => {
-      expect(result).toBe(true);
+    const mockResponse: AuthResponse = {
+      token: validToken,
+      user: {
+        id: 'user-1',
+        email: 'test@test.com',
+        avatarUrl: 'avatar.jpg',
+        createdAt: new Date(),
+      },
+    };
+
+    service.checkStatus().subscribe({
+      next: (result) => {
+        expect(result).toBe(true);
+
+        const additionalRequests = httpMock.match(() => true);
+        additionalRequests.forEach((req) => req.flush(mockResponse));
+
+        done();
+      },
     });
+
+    const req = httpMock.expectOne(`${baseUrl}/check-status`);
+    expect(req.request.method).toBe('GET');
+    req.flush(mockResponse);
   });
 });

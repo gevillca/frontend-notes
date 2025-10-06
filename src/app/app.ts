@@ -13,7 +13,7 @@ import { ThemeService } from '@shared/theme/services/theme.service';
   styleUrl: './app.scss',
 })
 export class App implements OnInit {
-  protected readonly title = signal('frontend-notes');
+  readonly title = signal('frontend-notes');
   private readonly themeService = inject(ThemeService);
 
   ngOnInit(): void {

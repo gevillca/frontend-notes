@@ -1,6 +1,6 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 import { App } from './app';
 
@@ -8,7 +8,7 @@ describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
-      providers: [provideZonelessChangeDetection(), MessageService],
+      providers: [provideZonelessChangeDetection(), MessageService, ConfirmationService],
     }).compileComponents();
   });
 
@@ -22,6 +22,6 @@ describe('App', () => {
     const fixture = TestBed.createComponent(App);
     const app = fixture.componentInstance;
     await fixture.whenStable();
-    expect((app as any).title()).toBe('frontend-notes');
+    expect(app.title()).toBe('frontend-notes');
   });
 });
