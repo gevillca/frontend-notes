@@ -6,11 +6,13 @@ export interface EnvironmentConfig {
   apiUrl: string;
   appName: string;
   version: string;
+  useMockApi: boolean;
 }
 
 export const environment: EnvironmentConfig = {
-  production: false,
-  apiUrl: 'http://localhost:3000/api',
-  appName: 'Frontend MVP',
+  production: true,
+  apiUrl: 'https://api-url',
+  appName: 'Frontend Notes',
   version: '1.0.0',
+  useMockApi: false,
 };

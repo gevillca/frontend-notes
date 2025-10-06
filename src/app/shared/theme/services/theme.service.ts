@@ -24,31 +24,27 @@ export class ThemeService {
   private readonly storageService = inject(StorageService);
   private readonly storageKey = 'app-theme';
 
-  /** Tema seleccionado por el usuario ('system' permite seguir las preferencias del SO) */
   public readonly theme = signal<Theme>('system');
 
-  /** Tema resuelto actual (siempre 'light' o 'dark', nunca 'system') */
   public readonly resolvedTheme = signal<ResolvedTheme>('light');
 
   private mediaQuery: MediaQueryList;
+
+  private readonly saveThemeEffect = effect(() => {
+    const currentTheme = this.theme();
+    this.storageService.setItem(this.storageKey, currentTheme);
+    this.updateResolvedTheme();
+  });
+
+  private readonly applyThemeEffect = effect(() => {
+    const resolved = this.resolvedTheme();
+    this.applyTheme(resolved);
+  });
 
   constructor() {
     this.mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     this.setupMediaQueryListener();
     this.loadTheme();
-
-    // Effect para guardar el tema seleccionado y actualizar el tema resuelto
-    effect(() => {
-      const currentTheme = this.theme();
-      this.storageService.setItem(this.storageKey, currentTheme);
-      this.updateResolvedTheme();
-    });
-
-    // Effect para aplicar los cambios visuales cuando cambia el tema resuelto
-    effect(() => {
-      const resolved = this.resolvedTheme();
-      this.applyTheme(resolved);
-    });
   }
 
   private setupMediaQueryListener(): void {
@@ -85,15 +81,13 @@ export class ThemeService {
   private applyTheme(theme: ResolvedTheme): void {
     const root = this.document.documentElement;
 
-    // Limpiar y aplicar clase de tema (solo en documentElement es suficiente)
     root.classList.remove('app-dark', 'app-light');
     root.classList.add(`app-${theme}`);
 
-    // Establecer atributos esenciales
     root.setAttribute('data-theme', theme);
     root.style.colorScheme = theme;
 
-    // Notificar cambios de tema
+    // Notification change theme
     this.dispatchThemeChangeEvent(theme);
   }
 
@@ -111,18 +105,16 @@ export class ThemeService {
   }
 
   /**
-   * Alterna entre temas de forma inteligente:
-   * - Si está en 'system': cambia al opuesto del tema actual del sistema
-   * - Si está en tema específico: alterna entre 'light' y 'dark'
+   * Alternate between light and dark themes. If the current theme is 'system',
+   * it switches to the opposite of the current system theme.
+   *
    */
   public toggleTheme(): void {
     const current = this.theme();
     if (current === 'system') {
-      // Si está en system, cambiar al opuesto del tema actual del sistema
       const systemTheme = this.mediaQuery.matches ? 'dark' : 'light';
       this.theme.set(systemTheme === 'dark' ? 'light' : 'dark');
     } else {
-      // Si no está en system, alternar entre light y dark
       this.theme.set(current === 'light' ? 'dark' : 'light');
     }
   }

@@ -15,14 +15,26 @@
       <app-theme />
     </div>
 
-    <p-avatar
-      image="https://primefaces.org/cdn/primeng/images/demo/avatar/xuxuefeng.png"
-      size="large"
-      shape="square"
-      pTooltip="Usuario"
-      class="cursor-pointer"
-      tooltipPosition="bottom"
-      (click)="userMenu.toggle($event)"></p-avatar>
+    <!-- User Profile Section -->
+    <div
+      class="user-profile-wrapper"
+      role="button"
+      tabindex="0"
+      (click)="userMenu.toggle($event)"
+      (keydown.enter)="userMenu.toggle($event)"
+      (keydown.space)="userMenu.toggle($event)">
+      <div class="user-profile-desktop">
+        <p-chip [label]="userEmail()" />
+        <p-avatar [image]="userAvatar()" size="large" shape="circle" />
+      </div>
+      <!-- User profile mobile -->
+      <div class="user-profile-mobile">
+        <div class="user-avatar-container">
+          <p-avatar [image]="userAvatar()" size="large" shape="circle" />
+          <span class="user-initial-badge">{{ userInitial() }}</span>
+        </div>
+      </div>
+    </div>
 
     <p-menu #userMenu [model]="userMenuItems" [popup]="true" class="user-dropdown-menu"></p-menu>
   </div>

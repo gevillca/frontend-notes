@@ -1,1 +1,79 @@
-<p>note works!</p>
+<div class="p-6 bg-white dark:bg-gray-900 min-h-screen">
+  <!-- Note Form Dialog -->
+  <p-dialog
+    [(visible)]="showNoteForm"
+    [modal]="true"
+    [closable]="true"
+    [draggable]="false"
+    [resizable]="false"
+    styleClass="w-full max-w-4xl"
+    (onHide)="onCancelForm()">
+    <app-note-form
+      [note]="editingNote()"
+      [availableTags]="allTags()"
+      (save)="onSaveNote($event)"
+      (formCancel)="onCancelForm()" />
+  </p-dialog>
+
+  <app-page-header
+    [title]="viewTitle()"
+    [searchValue]="notesStore.searchTerm()"
+    (searchChange)="onSearchChange($event)" />
+
+  <!-- Main Content Area -->
+  <div class="flex flex-1 overflow-hidden">
+    <!-- Middle Column: Notes List -->
+    <div class="w-96 flex flex-col border-r border-surface bg-surface-card">
+      <!-- Notes List with Create Button -->
+      <div class="flex-1 overflow-auto">
+        <!-- Create Note Button -->
+        <div class="p-4">
+          <p-button
+            label="Create Note"
+            icon="pi pi-plus"
+            severity="primary"
+            styleClass="w-full"
+            (onClick)="onCreateNote()" />
+        </div>
+
+        @if (filteredNotes().length === 0) {
+          <div class="flex flex-col items-center justify-center h-64 text-center p-4">
+            <i class="pi pi-file text-6xl text-surface-400 mb-3"></i>
+            <h3 class="text-base font-medium text-surface-900 dark:text-surface-0 mb-2">
+              No notes found
+            </h3>
+            <p class="text-sm text-surface-500 dark:text-surface-400">
+              @if (currentTag()) {
+                No notes with tag "{{ currentTag() }}".
+              } @else if (isArchivedView()) {
+                No archived notes yet.
+              } @else {
+                Create your first note to get started.
+              }
+            </p>
+          </div>
+        } @else {
+          <div class="pb-4">
+            @for (note of filteredNotes(); track note.id) {
+              <app-note-list-item
+                [note]="note"
+                [allTags]="allTags()"
+                [isSelected]="selectedNote()?.id === note.id"
+                (noteClick)="onNoteClick($event)" />
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Center Column: Note Detail -->
+    <div class="flex-1">
+      <app-note-detail
+        [note]="selectedNote()"
+        [allTags]="allTags()"
+        (editNote)="onEditNote($event)"
+        (archiveNote)="onArchiveNote($event)"
+        (deleteNote)="onDeleteNote($event)" />
+    </div>
+  </div>
+</div>

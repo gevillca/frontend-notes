@@ -1,11 +1,15 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { PanelMenuModule } from 'primeng/panelmenu';
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, input, OnInit, signal } from '@angular/core';
+import { MenuItem } from 'primeng/api';
+
+import { Tag } from '@features/notes/interfaces/tag.interface';
+import { TagsService } from '@features/notes/services/tags.service';
 
 import { AppMenu } from './menu/app.menu.component';
 
 @Component({
   selector: 'app-sidebar',
-  imports: [AppMenu],
+  imports: [CommonModule, AppMenu],
   templateUrl: './sidebar.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
@@ -13,86 +17,45 @@ import { AppMenu } from './menu/app.menu.component';
     '[class.sidebar-expanded]': '!collapsed()',
   },
 })
-export class Sidebar {
-  readonly collapsed = input<boolean>(false);
+export class Sidebar implements OnInit {
+  private readonly tagsService = inject(TagsService);
 
-  // 📋 Menú con comportamiento expandible/colapsable
-  protected readonly menuItems: PanelMenuModule[] = [
-    {
-      label: 'Inicio',
-      icon: 'pi pi-fw pi-home',
-      // routerLink: ['/admin/dashboard'],
-      items: [
-        {
-          label: 'Dashboard',
-          icon: 'pi pi-fw pi-home',
-          routerLink: ['/admin/dashboard'],
-        },
-      ],
-    },
-    {
-      label: 'Gestión de Usuarios',
-      icon: 'pi pi-fw pi-users',
-      items: [
-        {
-          label: 'Lista de Usuarios',
-          icon: 'pi pi-fw pi-list',
-          routerLink: ['/admin/users'],
-        },
-        {
-          label: 'Crear Usuario',
-          icon: 'pi pi-fw pi-user-plus',
-          routerLink: ['/admin/users/create'],
-        },
-        {
-          label: 'Permisos',
-          icon: 'pi pi-fw pi-key',
-          routerLink: ['/admin/users/permissions'],
-        },
-      ],
-    },
+  collapsed = input<boolean>(false);
+  tags = signal<Tag[]>([]);
 
-    {
-      label: 'Configuración',
-      icon: 'pi pi-fw pi-cog',
-      items: [
-        {
-          label: 'General',
-          icon: 'pi pi-fw pi-sliders-h',
-          routerLink: ['/admin/settings/general'],
-        },
-        {
-          label: 'Seguridad',
-          icon: 'pi pi-fw pi-shield',
-          routerLink: ['/admin/settings/security'],
-        },
-        {
-          label: 'Notificaciones',
-          icon: 'pi pi-fw pi-bell',
-          items: [
-            {
-              label: 'Email',
-              icon: 'pi pi-fw pi-envelope',
-              routerLink: ['/admin/settings/notifications/email'],
-            },
-            {
-              label: 'SMS',
-              icon: 'pi pi-fw pi-mobile',
-              routerLink: ['/admin/settings/notifications/sms'],
-            },
-            {
-              label: 'Push',
-              icon: 'pi pi-fw pi-send',
-              routerLink: ['/admin/settings/notifications/push'],
-            },
-          ],
-        },
-        {
-          label: 'Integraciones',
-          icon: 'pi pi-fw pi-bars',
-          routerLink: ['/admin/settings/integrations'],
-        },
-      ],
-    },
-  ];
+  ngOnInit(): void {
+    this.tagsService.getAllTags().subscribe((tagsArray: Tag[]) => {
+      this.tags.set(tagsArray);
+    });
+  }
+
+  protected get menuItems(): MenuItem[] {
+    return [
+      {
+        items: [
+          {
+            label: 'All Notes',
+            icon: 'pi pi-home',
+            routerLink: ['/notes'],
+          },
+          {
+            label: 'Archived Notes',
+            icon: 'pi pi-inbox',
+            routerLink: ['/notes/archived'],
+          },
+        ],
+      },
+      {
+        separator: true,
+      },
+      {
+        label: 'Tags',
+        items: this.tags().map((tag) => ({
+          label: tag.name,
+          icon: 'pi pi-tag',
+          routerLink: ['/notes/tag', tag.id],
+        })),
+      },
+    ];
+  }
 }

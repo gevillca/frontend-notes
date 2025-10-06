@@ -1,10 +1,191 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Button } from 'primeng/button';
+import { DialogModule } from 'primeng/dialog';
+import { filter, map } from 'rxjs/operators';
+
+import { PageHeaderComponent } from '@shared/components/ui/page-header/page-header.component';
+import { QUERY_PARAMS } from '@shared/constants/query-params.constants';
+import { CONFIRMATION_SERVICE } from '@shared/services/ui/confirmation/interface/confirmation.interface';
+import { NOTIFICATIONS_MESSAGES } from '@shared/services/ui/notification/constants/notification-messages.constants';
+import { NOTIFICATION_SERVICE } from '@shared/services/ui/notification/interface/notification.interface';
+import {
+  NoteDetailComponent,
+  NoteFormComponent,
+  NoteListItemComponent,
+} from '@features/notes/components';
+import { Note } from '@features/notes/interfaces/notes.interface';
+import { NotesStore } from '@features/notes/store/notes.store';
+import { TagsStore } from '@features/notes/store/tags.store';
 
 @Component({
   selector: 'app-note',
-  imports: [],
+  imports: [
+    CommonModule,
+    PageHeaderComponent,
+    NoteFormComponent,
+    NoteListItemComponent,
+    NoteDetailComponent,
+    Button,
+    DialogModule,
+  ],
+
   templateUrl: './note.component.html',
-  styleUrl: './note.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class NoteComponent {}
+export default class NoteComponent {
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly confirmationService = inject(CONFIRMATION_SERVICE);
+  private readonly notificationService = inject(NOTIFICATION_SERVICE);
+  readonly notesStore = inject(NotesStore);
+  readonly tagsStore = inject(TagsStore);
+
+  readonly showNoteForm = signal<boolean>(false);
+  readonly editingNote = signal<Note | null>(null);
+
+  private readonly routeParams = toSignal(this.route.paramMap);
+  private readonly queryParams = toSignal(this.route.queryParamMap);
+  private readonly routeUrl = toSignal(
+    this.route.url.pipe(map((segments) => segments.map((segment) => segment.path))),
+  );
+
+  readonly allTags = this.tagsStore.tags;
+
+  currentTag = computed(() => {
+    const params = this.routeParams();
+    return params?.get('tag') || null;
+  });
+
+  isArchivedView = computed(() => {
+    const url = this.routeUrl();
+    return url?.includes('archived') || false;
+  });
+
+  private readonly syncTagFilterWithRoute = effect(() => {
+    const tag = this.currentTag();
+    this.notesStore.setFilterTag(tag);
+  });
+
+  private readonly syncArchivedViewWithRoute = effect(() => {
+    const isArchived = this.isArchivedView();
+    this.notesStore.setShowArchived(isArchived);
+
+    if (isArchived) {
+      this.notesStore.searchNotes('');
+    }
+  });
+
+  /**
+   * Synchronizes search term from URL query parameters.
+   * Clears search when no query param is present.
+   */
+  private readonly syncSearchFromUrl = effect(() => {
+    const params = this.queryParams();
+    const search = params?.get(QUERY_PARAMS.SEARCH) || '';
+
+    this.notesStore.searchNotes(search);
+  });
+
+  filteredNotes = this.notesStore.filteredNotes;
+  selectedNote = this.notesStore.selectedNote;
+  isLoading = this.notesStore.isLoading;
+
+  viewTitle = computed(() => {
+    if (this.isArchivedView()) {
+      return 'Archived Notes';
+    } else if (this.currentTag()) {
+      return `Notes tagged with: ${this.currentTag()}`;
+    } else {
+      return 'All Notes';
+    }
+  });
+
+  /**
+   * Handles search input changes.
+   * Updates both store state and URL query parameters.
+   */
+  onSearchChange(searchTerm: string): void {
+    this.notesStore.searchNotes(searchTerm);
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { [QUERY_PARAMS.SEARCH]: searchTerm || null },
+      queryParamsHandling: 'merge',
+    });
+  }
+
+  onCreateNote(): void {
+    this.editingNote.set(null);
+    this.showNoteForm.set(true);
+  }
+
+  onNoteClick(note: Note): void {
+    this.notesStore.setSelectedNote(note);
+  }
+
+  onEditNote(note: Note): void {
+    this.editingNote.set(note);
+    this.showNoteForm.set(true);
+  }
+
+  onSaveNote(noteData: Partial<Note>): void {
+    const isEditing = this.editingNote() !== null;
+
+    if (isEditing) {
+      this.notesStore.updateNote({ id: noteData.id!, note: noteData });
+      this.notificationService.success(NOTIFICATIONS_MESSAGES.NOTE_UPDATED);
+    } else {
+      this.notesStore.createNote(noteData);
+      this.notificationService.success(NOTIFICATIONS_MESSAGES.NOTE_CREATED);
+    }
+
+    this.closeNoteForm();
+  }
+
+  onCancelForm(): void {
+    this.closeNoteForm();
+  }
+
+  onArchiveNote(note: Note): void {
+    this.confirmationService
+      .confirmArchive(
+        'Are you sure you want  to archive this note? You can find it in the Archived Notes sections and restore it anytime.',
+      )
+      .pipe(filter((confirmed) => confirmed === true))
+      .subscribe({
+        next: () => {
+          this.notesStore.toggleArchive(note.id);
+          this.notificationService.success(NOTIFICATIONS_MESSAGES.NOTE_ARCHIVED);
+        },
+      });
+  }
+
+  onDeleteNote(note: Note): void {
+    this.confirmationService
+      .confirmDelete(
+        'Are you sure you want to permanently delete this note? This action cannot be undone.',
+      )
+      .pipe(filter((confirmed) => confirmed === true))
+      .subscribe({
+        next: () => {
+          this.notesStore.deleteNote(note.id);
+          this.notificationService.success(NOTIFICATIONS_MESSAGES.NOTE_DELETED);
+        },
+      });
+  }
+
+  private closeNoteForm(): void {
+    this.showNoteForm.set(false);
+    this.editingNote.set(null);
+  }
+}

@@ -1,13 +1,13 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 
-import { NOTIFICATIONS_MESSAGES } from '@shared/services/ui/notification/constants/notification-messages.constants';
 import { NOTIFICATION_SERVICE } from '@shared/services/ui/notification/interface/notification.interface';
+import { AuthService } from '@features/auth/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -20,10 +20,13 @@ import { NOTIFICATION_SERVICE } from '@shared/services/ui/notification/interface
     RouterLink,
   ],
   templateUrl: './login.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginComponent {
   private readonly formBuilder = inject(FormBuilder);
   private readonly notificationService = inject(NOTIFICATION_SERVICE);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   loginForm: FormGroup = this.formBuilder.group({
     email: ['', [Validators.required, Validators.email]],
@@ -31,9 +34,23 @@ export class LoginComponent {
   });
 
   onSubmit(): void {
-    const loginData = this.loginForm.value;
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      return;
+    }
 
-    console.log('Login attempt with data:', loginData);
-    this.notificationService.success(NOTIFICATIONS_MESSAGES.NOTE_ARCHIVED);
+    const { email, password } = this.loginForm.value;
+
+    this.authService.login(email, password).subscribe({
+      next: (success) => {
+        if (success) {
+          this.notificationService.success('Login successful!');
+          this.router.navigate(['/notes']);
+        }
+      },
+      error: (error) => {
+        this.notificationService.error(error.message || 'Login error');
+      },
+    });
   }
 }

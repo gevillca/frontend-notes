@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { MessageService } from 'primeng/api';
 
-import { NotificationOptions, NotificationService } from './interface/notification.interface';
+import { Notification, NotificationOptions } from './interface/notification.interface';
 
 export type NotificationType = 'success' | 'error' | 'info' | 'warn';
 
@@ -26,7 +26,7 @@ const NOTIFICATION_DEFAULT_CONFIG = {
  * Uses PrimeNG MessageService for consistent user feedback
  */
 @Injectable({ providedIn: 'root' })
-export class NotificationServiceImpl implements NotificationService {
+export class NotificationServiceImpl implements Notification {
   private readonly messageService = inject(MessageService);
 
   success(message: string, options?: NotificationOptions): void {

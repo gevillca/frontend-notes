@@ -45,33 +45,27 @@ import { LayoutService } from '@shared/layouts/main-layout/service/layout.servic
   ],
 })
 export class AppMenuItem implements OnInit, OnDestroy {
-  // 📥 Inputs usando signals (mejores prácticas Angular 19+)
   readonly item = input.required<MenuItem>();
   readonly index = input.required<number>();
   readonly root = input<boolean>(false);
   readonly parentKey = input<string>('');
 
-  // 🔄 Estado reactivo con signals
   private readonly active = signal(false);
   private readonly keySignal = signal('');
 
-  // 📊 Computed properties para lógica reactiva
   readonly key = computed(() => this.keySignal());
   readonly isActiveMenuItem = computed(() => this.active() && !this.root());
   readonly submenuAnimation = computed(() =>
     this.root() ? 'expanded' : this.active() ? 'expanded' : 'collapsed',
   );
 
-  // 🔌 Servicios inyectados usando inject()
   private readonly router = inject(Router);
   private readonly layoutService = inject(LayoutService);
 
-  // 📡 Subscripciones
   private menuSourceSubscription: Subscription;
   private menuResetSubscription: Subscription;
 
   constructor() {
-    // 📊 Suscripción al estado del menú
     this.menuSourceSubscription = this.layoutService.menuSource$.subscribe((value) => {
       Promise.resolve(null).then(() => {
         if (value.routeEvent) {
@@ -84,12 +78,10 @@ export class AppMenuItem implements OnInit, OnDestroy {
       });
     });
 
-    // 🔄 Suscripción al reset del menú
     this.menuResetSubscription = this.layoutService.resetSource$.subscribe(() => {
       this.active.set(false);
     });
 
-    // 🧭 Suscripción a eventos de navegación
     this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
       const currentItem = this.item();
       if (currentItem.routerLink) {
@@ -99,12 +91,10 @@ export class AppMenuItem implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    // 🔑 Generar clave única para el item
     const parentKey = this.parentKey();
     const index = this.index();
     this.keySignal.set(parentKey ? `${parentKey}-${index}` : String(index));
 
-    // 🧭 Verificar estado activo inicial
     const currentItem = this.item();
     if (currentItem.routerLink) {
       this.updateActiveStateFromRoute();
@@ -130,23 +120,19 @@ export class AppMenuItem implements OnInit, OnDestroy {
   itemClick(event: Event) {
     const currentItem = this.item();
 
-    // 🚫 Evitar procesar items deshabilitados
     if (currentItem.disabled) {
       event.preventDefault();
       return;
     }
 
-    // ⚡ Ejecutar comando si existe
     if (currentItem.command) {
       currentItem.command({ originalEvent: event, item: currentItem });
     }
 
-    // 🔄 Toggle del estado activo para items con subitems
     if (currentItem.items) {
       this.active.update((current) => !current);
     }
 
-    // 📢 Notificar cambio de estado al layout service
     this.layoutService.onMenuStateChange({ key: this.key() });
   }
 

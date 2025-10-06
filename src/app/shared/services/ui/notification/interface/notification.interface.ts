@@ -1,8 +1,5 @@
 import { InjectionToken } from '@angular/core';
 
-/**
- * Opciones de configuración para notificaciones
- */
 export interface NotificationOptions {
   title?: string;
   duration?: number;
@@ -10,17 +7,43 @@ export interface NotificationOptions {
 }
 
 /**
- * Contrato para servicios de notificación
+ * Configuration options for notifications
  */
-export interface NotificationService {
+export interface Notification {
+  /*
+   * Shows a success notification
+     @param message - The notification message to display
+     @param options - Optional configuration for the notification
+   */
   success(message: string, options?: NotificationOptions): void;
+
+  /*
+   * Shows an error notification
+    @param message - The notification message to display
+    @param options - Optional configuration for the notification
+   */
   error(message: string, options?: NotificationOptions): void;
+
+  /*
+   * Shows an info notification
+    @param message - The notification message to display
+    @param options - Optional configuration for the notification
+   */
   info(message: string, options?: NotificationOptions): void;
+
+  /*
+   * Shows a warning notification
+    @param message - The notification message to display
+    @param options - Optional configuration for the notification
+   */
   warn(message: string, options?: NotificationOptions): void;
+
+  /*  * Clears all notifications
+   */
   clear(): void;
 }
 
 /**
- * Token de inyección para NotificationService
+ * Injection token for NotificationService
  */
-export const NOTIFICATION_SERVICE = new InjectionToken<NotificationService>('NotificationService');
+export const NOTIFICATION_SERVICE = new InjectionToken<Notification>('Notification');

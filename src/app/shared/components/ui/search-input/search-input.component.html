@@ -1,0 +1,10 @@
+<p-iconfield iconPosition="left" class="w-full">
+  <p-inputicon class="pi pi-search" />
+  <input
+    pInputText
+    type="text"
+    [formControl]="searchControl"
+    [placeholder]="placeholder()"
+    [attr.aria-label]="placeholder()"
+    class="w-full" />
+</p-iconfield>
